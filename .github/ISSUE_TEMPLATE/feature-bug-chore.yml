@@ -1,8 +1,7 @@
 name: "Issue (Feature / Bug / Chore)"
 description: "Create an issue with a rough idea for later planning"
-title: ""
-labels:
-  - "status:needs-plan"
+title: "[TYPE]: "
+labels: ["status:needs-plan"]
 
 body:
   - type: dropdown
