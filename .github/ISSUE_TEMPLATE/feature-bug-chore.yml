@@ -1,6 +1,6 @@
 name: "Issue (Feature / Bug / Chore)"
 description: "Create an issue with a rough idea for later planning"
-title: "[TYPE]: "
+title: ""
 labels:
   - "status:needs-plan"
 
@@ -24,17 +24,16 @@ body:
       description: Fill in briefly. Structure helps, but keep it lightweight.
       value: |
         ## Problem / Goal
-        <!-- What are you trying to achieve? -->
+        What are you trying to achieve?
 
         ## Expected Outcome
-        <!-- What should exist or work after this is done? -->
+        What should exist or work after this is done?
 
         ## Acceptance Criteria (rough)
-        - [ ] 
-        - [ ] 
-        - [ ] 
+        - Testable and observable criteria 1
+        - Testable and observable criteria 2
 
         ## Context
-        <!-- Links, screenshots, notes, ideas -->
+        Links, screenshots, notes, ideas
     validations:
       required: true
