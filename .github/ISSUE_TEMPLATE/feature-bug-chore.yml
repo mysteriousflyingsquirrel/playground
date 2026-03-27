@@ -1,0 +1,40 @@
+name: "Issue (Feature / Bug / Chore)"
+description: "Create an issue with a rough idea for later planning"
+title: "[TYPE]: "
+labels:
+  - "status:needs-plan"
+
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: What kind of issue is this?
+      options:
+        - Feature
+        - Bug
+        - Chore
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: Issue
+      description: Fill in briefly. Structure helps, but keep it lightweight.
+      value: |
+        ## Problem / Goal
+        <!-- What are you trying to achieve? -->
+
+        ## Expected Outcome
+        <!-- What should exist or work after this is done? -->
+
+        ## Acceptance Criteria (rough)
+        - [ ] 
+        - [ ] 
+        - [ ] 
+
+        ## Context
+        <!-- Links, screenshots, notes, ideas -->
+    validations:
+      required: true
