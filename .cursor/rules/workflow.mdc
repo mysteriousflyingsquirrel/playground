@@ -1,0 +1,25 @@
+---
+description: Core Cursor workflow for planning, execution, and verification in this repo
+alwaysApply: true
+---
+
+# Workflow
+
+- Use Plan Mode for non-trivial or multi-file work.
+- Ask clarifying questions when requirements or trade-offs are ambiguous.
+- Let the agent search the codebase unless the exact file is already known.
+- Keep changes scoped to the approved plan.
+- Start a new conversation for a new task when prior context is no longer useful.
+
+# Verification
+
+- Run only commands that exist in `package.json`.
+- After substantive changes, run `npm run build`.
+- Do not invent `lint`, `typecheck`, or `test` commands before they exist.
+
+# Operating Model Sources
+
+- Canonical project instructions live in `docs/cursor_operating_model.md`.
+- Setup and maintenance checklist lives in `docs/project_init.md`.
+- Day-to-day usage guide lives in `docs/operating_model_cheatsheet.md`.
+- Root `AGENTS.md` is only a pointer; detailed guidance lives here in `.cursor/rules/`.

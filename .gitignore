@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Secrets (GitHub MCP token)
+.cursor/.env
+
 # Editor
 .vscode/*
 !.vscode/extensions.json

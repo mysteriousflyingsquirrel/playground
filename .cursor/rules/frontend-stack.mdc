@@ -1,0 +1,22 @@
+---
+description: React and Vite patterns for the playground frontend
+globs: src/**/*.{js,jsx,css}
+alwaysApply: false
+---
+
+# Frontend Stack
+
+- This repo uses Vite with React and React Router.
+- Follow existing patterns before introducing a new structure.
+
+# Canonical Files
+
+- App shell and route rendering: `@src/App.jsx`
+- Route definitions: `@src/routes.jsx`
+- App bootstrap: `@src/main.jsx`
+
+# Guidance
+
+- Keep route additions aligned with `src/routes.jsx`.
+- Prefer small, readable components that match the existing JSX style in `src/`.
+- Keep guidance concrete and repo-specific; avoid adding generic frontend style-guide text here.

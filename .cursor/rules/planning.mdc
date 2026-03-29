@@ -1,0 +1,16 @@
+---
+description: Plan work from issue shape and keep scope tied to acceptance criteria
+alwaysApply: false
+---
+
+# Planning
+
+- For feature, bug, or chore work, start from the problem, expected outcome, and rough acceptance criteria.
+- If an issue exists, keep the plan aligned to the structure in `@.github/ISSUE_TEMPLATE/feature-bug-chore.yml`.
+- Translate rough ideas into a concrete plan before implementation.
+
+# Scope Control
+
+- Keep plans specific to the current repo state.
+- Reference only files, commands, and checks that actually exist.
+- If the plan changes the operating model, update `docs/project_init.md` in the same change.
