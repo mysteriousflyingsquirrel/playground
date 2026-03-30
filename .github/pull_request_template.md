@@ -3,6 +3,10 @@
 - What changed?
 - Why was it needed?
 
+## Linked issues
+
+- `Closes #` or `Fixes #` (replace with the issue number). Required for **automatic issue close** when this PR merges into the default branch.
+
 ## Plan
 
 - Link the accepted plan if one exists.

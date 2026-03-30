@@ -2,7 +2,7 @@
 
 Canonical agent guidance lives in `.cursor/rules/`.
 
-Operating-model explanation lives in `docs/cursor_operating_model.md`.
+Operating-model explanation lives in `docs/operating_model.md`.
 
 Setup and maintenance checklist lives in `docs/project_init.md`.
 

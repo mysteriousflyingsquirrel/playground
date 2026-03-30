@@ -4,7 +4,7 @@
 
 Use this file as the fast guide for working inside this repo's Cursor operating model.
 
-Use `docs/cursor_operating_model.md` for the full explanation and `docs/project_init.md` for setup and maintenance tracking.
+Use `docs/operating_model.md` for the full explanation and `docs/project_init.md` for setup and maintenance tracking.
 
 ## Feature Delivery Checklist
 
@@ -15,6 +15,17 @@ Capture the problem, expected outcome, and rough acceptance criteria before impl
 
 Do this:
 Use the existing issue template in `.github/ISSUE_TEMPLATE/feature-bug-chore.yml`.
+Use `/create-issue` when you want the agent to draft issue content against this template.
+Use exactly one active `status:*` label at a time:
+
+| Phase | Label |
+|--------|--------|
+| New issue | `status:needs-plan` |
+| Planning or implementation active | `status:in-progress` |
+| PR open, awaiting merge | `status:in-review` |
+| After merge (optional) | `status:done` |
+
+When you open a PR, put **`Closes #issue`** or **`Fixes #issue`** in the PR body so GitHub closes the issue on merge (labels alone do not close issues).
 
 Example:
 
@@ -34,6 +45,13 @@ Acceptance Criteria:
 ```
 
 Adapt this by replacing the placeholders with the smallest useful scope for the feature.
+Keep exactly one active `status:*` label per issue.
+
+Shortcut:
+
+```text
+/create-issue
+```
 
 ### 2. Start A Fresh Cursor Chat
 
@@ -59,11 +77,13 @@ Get a phased implementation plan with real files, risks, and verification steps 
 
 Do this:
 Tell the agent to use Plan Mode for non-trivial work.
+Resolve the issue source up front (GitHub issue URL/number vs pasted issue text).
 
 Example prompt:
 
 ```text
 Use Plan Mode for this feature.
+First confirm whether the source is a GitHub issue link/number or pasted issue text.
 Research the relevant files, ask clarifying questions if needed, and give me a phased plan with concrete file paths, risks, and verification steps.
 ```
 
@@ -142,7 +162,7 @@ List findings first, then open questions, then a short summary.
 Shortcut:
 
 ```text
-/review
+/review-changes
 ```
 
 ### 8. Prepare The PR
@@ -152,18 +172,19 @@ Turn the finished work into a review-ready summary with verification notes.
 
 Do this:
 Ask for PR content that includes scope, validation, and any operating-model updates.
+Require verification command/result, plan reference, screenshot policy (or explicit waiver), and follow-up notes.
 
 Example prompt:
 
 ```text
 Prepare the PR contents for these changes.
-Include a concise title, summary, verification performed, and note any operating-model docs updated.
+Include a concise title, summary, plan reference (if any), verification commands and pass/fail status, screenshot attachment or explicit waiver for UI changes, and note any operating-model docs updated.
 ```
 
 Shortcut:
 
 ```text
-/pr
+/create-pr
 ```
 
 ### 9. Update Operating-Model Docs When Needed
@@ -176,7 +197,7 @@ Update the right doc based on what changed.
 
 - If setup or tracked assets changed: update `docs/project_init.md`
 - If daily workflow changed: update `docs/operating_model_cheatsheet.md`
-- If structure, concepts, or artifact mapping changed: update `docs/cursor_operating_model.md`
+- If structure, concepts, or artifact mapping changed: update `docs/operating_model.md`
 
 Example prompt:
 
@@ -253,7 +274,7 @@ Prepare a PR:
 
 ```text
 Prepare the PR contents for these changes.
-Include a concise title, summary, verification performed, and note any operating-model docs updated.
+Include a concise title, summary, plan reference (if any), verification commands and pass/fail status, screenshot attachment or explicit waiver for UI changes, and note any operating-model docs updated.
 ```
 
 Update operating-model docs:
@@ -268,6 +289,19 @@ Update the relevant operating-model docs in the same change and summarize what c
 - Current verification command: `npm run build`
 - Do not document `lint`, `typecheck`, or `test` until those commands actually exist in `package.json`.
 - Root `AGENTS.md` is only a pointer; canonical guidance lives in `.cursor/rules/`.
+- This workspace runs on Windows PowerShell, so command examples should be PowerShell-compatible.
+
+## Mode Handoffs
+
+- Plan approved -> switch to implementation mode and execute only approved scope.
+- Ask mode -> provide guidance only; do not edit files.
+- Debug mode -> use runtime evidence before proposing or applying fixes.
+
+## Wrong Project / Port Triage
+
+- Confirm the browser URL and dev-server port match the intended repo.
+- If content/title appears from a different project, restart on an explicit port (for example `npm run dev -- --port 4173 --strictPort`).
+- After switching ports/servers, perform a hard refresh to clear stale bundle state.
 
 ## What To Update When The Operating Model Changes
 
@@ -275,15 +309,14 @@ Update these in the same change as needed:
 
 - `docs/project_init.md` for setup impact, inventory, and changelog
 - `docs/operating_model_cheatsheet.md` for daily workflow changes
-- `docs/cursor_operating_model.md` for conceptual or structural changes
+- `docs/operating_model.md` for conceptual or structural changes
 - the relevant `.cursor/` or `.github/` artifact that actually changed
 
 ## Quick Links
 
-- Operating model: `docs/cursor_operating_model.md`
+- Operating model: `docs/operating_model.md`
 - Project init: `docs/project_init.md`
 - Rules: `.cursor/rules/`
 - Commands: `.cursor/commands/`
 - Skills: `.cursor/skills/`
-- Plans: `.cursor/plans/`
 - PR template: `.github/pull_request_template.md`

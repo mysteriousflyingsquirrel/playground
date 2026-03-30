@@ -106,12 +106,15 @@ Notes:
 - Start a new conversation for a new task or when the current chat loses focus.
 - Use `@Past Chats` when prior work is relevant.
 - Tag files only when you know they are the right files; otherwise let the agent search.
+- Resolve issue source early for planning workflows: GitHub issue URL/number versus pasted issue text.
+- Use a single active `status:*` label per GitHub issue. Lifecycle: `status:needs-plan` (new) → `status:in-progress` (planning or coding) → `status:in-review` (PR open) → optionally `status:done` after merge.
+- To **auto-close an issue when a PR merges**, include `Closes #<n>` or `Fixes #<n>` in the PR **body** (not only the title).
 
 ---
 
 ## 4. Persistent Components
 
-### 4.1 `docs/cursor_operating_model.md`
+### 4.1 `docs/operating_model.md`
 
 Canonical explanation of the operating model and how Cursor artifacts fit together.
 
@@ -142,30 +145,22 @@ Optional, human-readable pointer file at the repo root.
 
 If used, keep it minimal and defer to `.cursor/rules/` and this document. It should not duplicate detailed instructions.
 
-### 4.6 `.cursor/plans/`
-
-Home for saved Plan Mode outputs that are worth keeping as working documentation.
-
-Policy:
-- Keep accepted and useful plans
-- Avoid saving throwaway drafts
-- Use saved plans as resumable project memory
-
-### 4.7 `.cursor/commands/`
+### 4.6 `.cursor/commands/`
 
 Reusable slash workflows for repeatable operations such as review, PR preparation, or issue-to-plan translation.
 
-### 4.8 `.cursor/skills/` and `.agents/skills/`
+### 4.7 `.cursor/skills/` and `.agents/skills/`
 
 Project-level skills that package reusable workflows or domain-specific operating knowledge.
 
 Use skills for tasks that are too specific or too heavy for always-on rules.
+UI/UX guidance should become a skill only once it is a repeated workflow with stable conventions.
 
-### 4.9 `.cursor/hooks.json`
+### 4.8 `.cursor/hooks.json`
 
 Optional control point for policy and automation. Hooks should only be added once a concrete need exists, such as formatting, shell guardrails, or secret scanning.
 
-### 4.10 `.github/workflows/` and `.github/pull_request_template.md`
+### 4.9 `.github/workflows/` and `.github/pull_request_template.md`
 
 CI and review scaffolding that turns expectations into explicit checks and review steps.
 
@@ -178,6 +173,7 @@ Cursor works best when the repo exposes real pass/fail signals.
 Current rule for this repo:
 - Reference only commands that actually exist
 - Today, `npm run build` is the main verification command
+- Keep command examples compatible with the primary local shell environment (PowerShell in this workspace)
 
 Future additions such as `lint`, `typecheck`, and `test` should only be documented once they exist in `package.json`.
 
@@ -201,6 +197,20 @@ Use layered review rather than relying on a single checkpoint.
 - On pull requests: rely on CI and optional Bugbot for automated review.
 - Before merge: perform human review for correctness, scope, and trade-offs.
 
+## 6.1 Mode Handoffs
+
+Use explicit handoffs to reduce execution ambiguity:
+- Plan approved -> move to implementation mode with approved scope only.
+- Ask mode -> guidance and analysis only, no file or system changes.
+- Debug mode -> runtime-evidence-first workflow before fixes.
+
+## 6.2 Wrong Project / Port Triage
+
+When UI behavior suggests the wrong project is loaded:
+- Verify the active browser URL and dev server port.
+- Restart the dev server on an explicit port when collisions are likely.
+- Hard refresh after server/port changes to clear stale bundles.
+
 ---
 
 ## 7. Template Folder Structure
@@ -209,7 +219,6 @@ Use layered review rather than relying on a single checkpoint.
 repo-root/
 ├── .cursor/
 │   ├── commands/
-│   ├── plans/
 │   ├── rules/
 │   └── skills/
 ├── .github/
@@ -217,7 +226,7 @@ repo-root/
 │   └── pull_request_template.md
 ├── AGENTS.md
 ├── docs/
-│   ├── cursor_operating_model.md
+│   ├── operating_model.md
 │   ├── operating_model_cheatsheet.md
 │   └── project_init.md
 ├── src/
@@ -244,7 +253,7 @@ When the operating model changes, update the relevant docs in the same change:
 
 - Update `docs/project_init.md` for setup impact, current-state inventory, and changelog.
 - Update `docs/operating_model_cheatsheet.md` for day-to-day workflow changes.
-- Update `docs/cursor_operating_model.md` when the conceptual model, artifact map, or repo conventions change.
+- Update `docs/operating_model.md` when the conceptual model, artifact map, or repo conventions change.
 
 ---
 

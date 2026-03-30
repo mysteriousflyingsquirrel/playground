@@ -19,7 +19,7 @@ alwaysApply: true
 
 # Operating Model Sources
 
-- Canonical project instructions live in `docs/cursor_operating_model.md`.
+- Canonical project instructions live in `docs/operating_model.md`.
 - Setup and maintenance checklist lives in `docs/project_init.md`.
 - Day-to-day usage guide lives in `docs/operating_model_cheatsheet.md`.
 - Root `AGENTS.md` is only a pointer; detailed guidance lives here in `.cursor/rules/`.

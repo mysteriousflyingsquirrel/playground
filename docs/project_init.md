@@ -11,7 +11,7 @@ This file also serves as the maintenance ledger for operating-model changes in t
 ### Repo basics
 
 - [ ] Confirm repository purpose, stack, and primary verification command.
-- [ ] Add a source-aligned operating model doc at `docs/cursor_operating_model.md`.
+- [ ] Add a source-aligned operating model doc at `docs/operating_model.md`.
 - [ ] Add a short usage guide at `docs/operating_model_cheatsheet.md`.
 - [ ] Decide whether root `AGENTS.md` will be a pointer file. Default: yes, pointer only.
 
@@ -22,12 +22,6 @@ This file also serves as the maintenance ledger for operating-model changes in t
 - [ ] Add at least one stack-specific rule pointing to canonical files.
 - [ ] Add a planning rule tied to issue shape or acceptance criteria.
 - [ ] Keep rules short and reference real files instead of copying large guidance.
-
-### Planning assets
-
-- [ ] Create `.cursor/plans/`.
-- [ ] Add a short policy file for which plans should be kept.
-- [ ] Decide repo policy: keep only accepted/useful plans, not throwaway drafts.
 
 ### Reusable workflows
 
@@ -52,16 +46,16 @@ This file also serves as the maintenance ledger for operating-model changes in t
 
 ### Present in this repo
 
-- `docs/cursor_operating_model.md`
+- `docs/operating_model.md`
 - `docs/operating_model_cheatsheet.md`
 - `docs/project_init.md`
 - `.cursor/rules/workflow.mdc`
 - `.cursor/rules/frontend-stack.mdc`
 - `.cursor/rules/planning.mdc`
-- `.cursor/plans/README.md`
-- `.cursor/commands/review.md`
-- `.cursor/commands/pr.md`
+- `.cursor/commands/review-changes.md`
+- `.cursor/commands/create-pr.md`
 - `.cursor/commands/plan-issue.md`
+- `.cursor/commands/create-issue.md`
 - `.cursor/skills/operating-model-maintenance/SKILL.md`
 - `AGENTS.md`
 - `.github/pull_request_template.md`
@@ -81,15 +75,31 @@ This file also serves as the maintenance ledger for operating-model changes in t
 
 ### 2026-03-29
 
-- Added `docs/cursor_operating_model.md` alignment to official Cursor artifacts and terminology.
+- Added `docs/operating_model.md` alignment to official Cursor artifacts and terminology.
 - Added `docs/operating_model_cheatsheet.md` as the short, day-to-day operating-model usage guide.
 - Refined `docs/operating_model_cheatsheet.md` into an end-to-end feature delivery checklist with prompt examples from issue creation through PR prep.
 - Added `.cursor/rules/` starter rule set for workflow, planning, and frontend stack guidance.
 - Added `AGENTS.md` as a minimal pointer to canonical rule and operating-model sources.
-- Added `.cursor/plans/README.md` to define saved-plan policy.
 - Added `.cursor/commands/` starter commands for review, PR prep, and issue-to-plan work.
 - Added `.cursor/skills/operating-model-maintenance/SKILL.md` for explicit maintenance of operating-model artifacts.
 - Added `.github/pull_request_template.md` and `.github/workflows/ci.yml` for minimal review and build validation.
+
+### 2026-03-30
+
+- Renamed `docs/cursor_operating_model.md` to `docs/operating_model.md` and updated all references.
+- Added `.cursor/commands/create-issue.md` for issue drafting aligned to the issue template.
+- Standardized minimum GitHub status labels for issue lifecycle tracking.
+- Removed `.cursor/plans` storage assumptions from operating-model docs and skills.
+
+### 2026-03-31
+
+- Simplified GitHub `status:*` lifecycle to four labels: `needs-plan`, `in-progress`, `in-review`, `done`.
+- Documented PR body `Closes #` / `Fixes #` for automatic issue close on merge; updated `.cursor/commands/pr.md` and `.github/pull_request_template.md`.
+
+### 2026-04-01
+
+- Renamed `.cursor/commands/pr.md` to `create-pr.md` (slash: `/create-pr`).
+- Renamed `.cursor/commands/review.md` to `review-changes.md` (slash: `/review-changes`).
 
 ## Update Rule
 
@@ -100,4 +110,4 @@ Minimum update steps:
 1. Update the relevant checklist item or current-state inventory.
 2. Add a dated changelog entry describing what changed and why.
 3. If the change alters daily usage, update `docs/operating_model_cheatsheet.md` as well.
-4. If the change alters working conventions or the conceptual model, update `docs/cursor_operating_model.md` or `.cursor/rules/` as well.
+4. If the change alters working conventions or the conceptual model, update `docs/operating_model.md` or `.cursor/rules/` as well.
