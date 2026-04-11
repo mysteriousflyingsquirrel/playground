@@ -1,9 +1,5 @@
 # Project Instructions
 
-Canonical agent guidance lives in `.cursor/rules/`.
+Contributor and agent guidance for this repo will live here once the new operating model is in place.
 
-Operating-model explanation lives in `docs/cursor_operating_model.md`.
-
-Setup and maintenance checklist lives in `docs/project_init.md`.
-
-Day-to-day usage guide lives in `docs/operating_model_cheatsheet.md`.
+Use `docs/project_init.md` for setup and maintenance notes. For this codebase, verify changes with `npm run build` when you touch application source.
