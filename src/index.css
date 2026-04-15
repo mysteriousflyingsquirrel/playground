@@ -218,3 +218,136 @@ body {
   visibility: hidden;
   min-height: 2.75rem;
 }
+
+/* Calendar (Issue #16) */
+.calendar-field-label {
+  display: block;
+  margin: 0 0 0.35rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.calendar-range-field {
+  width: 100%;
+  max-width: 22rem;
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.calendar-nav-label {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.calendar-nav-btn {
+  margin: 0;
+  padding: 0.45rem 0.7rem;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.calendar-nav-btn:hover {
+  background: rgba(110, 181, 255, 0.12);
+  border-color: var(--accent-dim);
+}
+
+.calendar-nav-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.calendar-months {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.calendar-month {
+  min-width: 18rem;
+  padding: 0.85rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.calendar-month-title {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.calendar-grid--weekdays {
+  margin-bottom: 0.35rem;
+}
+
+.calendar-weekday {
+  display: flex;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.calendar-day {
+  margin: 0;
+  min-height: 2.25rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.calendar-day:hover {
+  background: rgba(110, 181, 255, 0.1);
+  border-color: var(--accent-dim);
+}
+
+.calendar-day:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.calendar-day--in-range {
+  background: rgba(110, 181, 255, 0.15);
+}
+
+.calendar-day--edge {
+  color: var(--text);
+  background: rgba(110, 181, 255, 0.35);
+  border-color: var(--accent-dim);
+  font-weight: 600;
+}
+
+.calendar-day--today {
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.calendar-day--disabled {
+  visibility: hidden;
+  pointer-events: none;
+}

@@ -5,12 +5,13 @@
 import { execSync, spawnSync } from 'node:child_process'
 
 export const STATUS = {
+  needsPlan: 'status:needs-plan',
   inProgress: 'status:in-progress',
   inReview: 'status:in-review',
   done: 'status:done',
 }
 
-const ALL_STATUS = [STATUS.inProgress, STATUS.inReview, STATUS.done]
+const ALL_STATUS = [STATUS.needsPlan, STATUS.inProgress, STATUS.inReview, STATUS.done]
 
 export function extractIssueNumber(...texts) {
   for (const t of texts) {
@@ -72,43 +73,60 @@ export function isBuilderSubagent(payload) {
   return false
 }
 
+export function validateBuilderIssueContext(payload) {
+  if (!isBuilderSubagent(payload)) return { ok: true, issue: null, repo: null }
+  const issue = extractIssueNumber(payload.task, payload.description, payload.summary)
+  if (!issue) return { ok: false, reason: 'missing_issue' }
+  const repo = getRepoSlug()
+  if (!repo) return { ok: false, reason: 'missing_repo', issue }
+  return { ok: true, issue, repo }
+}
+
 /**
  * subagentStart: transition to status:in-progress when builder starts.
  */
 export function applyBuilderStartLabel(payload) {
-  if (!isBuilderSubagent(payload)) return
-  const issue = extractIssueNumber(payload.task)
+  if (!isBuilderSubagent(payload)) return { ok: true, skipped: true }
+  const issue = extractIssueNumber(payload.task, payload.description, payload.summary)
   if (!issue) {
     log('skip in-progress: no #issue in task')
-    return
+    return { ok: false, reason: 'missing_issue' }
   }
   const repo = getRepoSlug()
   if (!repo) {
     log('skip in-progress: could not resolve repo from origin')
-    return
+    return { ok: false, reason: 'missing_repo', issue }
   }
   removeStatusLabels(repo, issue, STATUS.inProgress)
   const r = ghIssueEdit(repo, issue, ['--add-label', STATUS.inProgress])
-  if (r.status !== 0) log('gh issue edit in-progress failed', r.status)
+  if (r.status !== 0) {
+    log('gh issue edit in-progress failed', r.status)
+    return { ok: false, reason: 'gh_label_update_failed', issue, repo }
+  }
+  return { ok: true, issue, repo }
 }
 
 /**
  * subagentStop: transition to status:in-review when builder completes successfully.
  */
 export function applyBuilderStopLabel(payload) {
-  if (!isBuilderSubagent(payload)) return
-  if (payload.status !== 'completed') return
+  if (!isBuilderSubagent(payload)) return { ok: true, skipped: true }
+  if (payload.status !== 'completed') return { ok: true, skipped: true }
   const issue = extractIssueNumber(payload.task, payload.summary)
   if (!issue) {
     log('skip in-review: no #issue in task/summary')
-    return
+    return { ok: false, reason: 'missing_issue' }
   }
   const repo = getRepoSlug()
   if (!repo) {
     log('skip in-review: could not resolve repo from origin')
-    return
+    return { ok: false, reason: 'missing_repo', issue }
   }
   removeStatusLabels(repo, issue, STATUS.inReview)
   const r = ghIssueEdit(repo, issue, ['--add-label', STATUS.inReview])
-  if (r.status !== 0) log('gh issue edit in-review failed', r.status)
+  if (r.status !== 0) {
+    log('gh issue edit in-review failed', r.status)
+    return { ok: false, reason: 'gh_label_update_failed', issue, repo }
+  }
+  return { ok: true, issue, repo }
 }

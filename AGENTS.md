@@ -26,7 +26,7 @@ Subagents, cloud agents, and any automated actor in this workflow must:
 ## Rules and automation
 
 - **Rules:** [.cursor/rules/git-workflow.mdc](.cursor/rules/git-workflow.mdc), [.cursor/rules/architecture.mdc](.cursor/rules/architecture.mdc), [.cursor/rules/ui-system.mdc](.cursor/rules/ui-system.mdc) when applicable.
-- **Hooks:** [.cursor/hooks.json](.cursor/hooks.json) — optional strict plan gate via `CURSOR_STRICT_PLAN_GATE=1`, post-edit **`npm run build`** when `src/` changed, shell policy for PR base and risky `git push`, subagent follow-up on **`[[BLOCKING]]`**. See the architecture doc for the wiring table.
+- **Hooks:** [.cursor/hooks.json](.cursor/hooks.json) — hard pre-implementation gate requiring explicit `builder-agent` delegation for implementation/workflow-execution prompts, post-edit **`npm run build`** when `src/` changed, shell policy for PR base and risky `git push` (including bare pushes from `dev`/`main`), subagent follow-up on **`[[BLOCKING]]`**, and builder start enforcement requiring `#<n>` for label automation. See the architecture doc for the wiring table.
 
 ## Verification
 

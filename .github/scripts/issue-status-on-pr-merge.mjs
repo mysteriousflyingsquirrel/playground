@@ -26,6 +26,7 @@ if (nums.length === 0) {
 }
 
 const STATUS = {
+  needsPlan: 'status:needs-plan',
   done: 'status:done',
   inProgress: 'status:in-progress',
   inReview: 'status:in-review',
@@ -41,6 +42,7 @@ function gh(args) {
 
 for (const n of nums) {
   gh(['issue', 'edit', String(n), '--add-label', STATUS.done])
+  gh(['issue', 'edit', String(n), '--remove-label', STATUS.needsPlan])
   gh(['issue', 'edit', String(n), '--remove-label', STATUS.inProgress])
   gh(['issue', 'edit', String(n), '--remove-label', STATUS.inReview])
   gh(['issue', 'close', String(n)])

@@ -14,18 +14,25 @@ try {
   process.exit(0)
 }
 
-applyBuilderStopLabel(payload)
+const stopResult = applyBuilderStopLabel(payload)
 
 const summary = String(payload.summary || '')
-if (!summary.includes('[[BLOCKING]]')) {
+if (!summary.includes('[[BLOCKING]]') && (stopResult?.ok || stopResult?.skipped)) {
   process.stdout.write('{}')
   process.exit(0)
 }
 
-process.stdout.write(
-  JSON.stringify({
-    followup_message:
-      'Subagent reported [[BLOCKING]]. Run /fix-from-review, delegate builder-agent on the same feature branch, then re-run code-review-agent and ui-review-agent (or UI N/A per ui-review-agent instructions).',
-  })
-)
+const messages = []
+if (summary.includes('[[BLOCKING]]')) {
+  messages.push(
+    'Subagent reported [[BLOCKING]]. Run /fix-from-review, delegate builder-agent on the same feature branch, then re-run code-review-agent and ui-review-agent (or UI N/A per ui-review-agent instructions).'
+  )
+}
+if (!(stopResult?.ok || stopResult?.skipped)) {
+  messages.push(
+    'builder-agent completed but issue label transition to status:in-review failed. Fix gh auth/permissions and update labels manually before proceeding.'
+  )
+}
+
+process.stdout.write(JSON.stringify({ followup_message: messages.join('\n\n') }))
 process.exit(0)

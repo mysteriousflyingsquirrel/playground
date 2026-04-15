@@ -12,6 +12,20 @@ alwaysApply: false
 - **Humans** merge approved PRs into **`dev`** and later promote **`dev` → `main`**.
 - **Never** target **`main`** with agent-created PRs, direct pushes to `main`, or agent-driven merges into `main`.
 
+## Builder-only implementation (hard rule)
+
+- After plan acceptance, **all implementation must be delegated to `builder-agent`**.
+- The primary agent must not directly implement feature code in Agent mode or Plan mode.
+- Implementation requests must explicitly mention **`builder-agent`** in the prompt/task.
+- Builder delegation tasks must include an issue reference (**`#<n>`**) so local hooks can update GitHub status labels.
+
+## GitHub label workflow (required)
+
+- On `builder-agent` start, hooks set issue label **`status:in-progress`**.
+- On successful `builder-agent` completion (PR ready), hooks set **`status:in-review`**.
+- PR body must include **`Closes #<n>`** or **`Fixes #<n>`** so merge automation can set **`status:done`** on merge to `dev`.
+- If `#<n>` is missing from builder delegation, hook enforcement blocks builder startup.
+
 ## Promotion to main
 
 - **`dev` → `main`** is a **human-controlled** release step, after checks on `dev` and the [release-readiness](@.cursor/skills/release-readiness/SKILL.md) checklist.

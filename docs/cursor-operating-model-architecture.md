@@ -13,7 +13,7 @@ This document maps the project’s **rules**, **skills**, **subagents**, and **h
 
 **Cloud agent** and **subagents** follow the same rules as above (see [Cloud agent](https://cursor.com/docs/cloud-agent) in [cursor_sources.md](cursor_sources.md)).
 
-Hooks enforce part of this via `beforeShellExecution` (see hook wiring below). A bare **`git push`** while checked out on **`dev`** cannot be reliably detected from the command string alone; **AGENTS.md** and **builder-agent** instructions rely on policy compliance for that case.
+Hooks enforce part of this via `beforeShellExecution` (see hook wiring below). The shell policy now blocks explicit pushes to protected branches and also blocks bare `git push` when currently checked out on `dev` or `main`.
 
 ---
 
@@ -84,11 +84,11 @@ Official hook reference: [Hooks](https://cursor.com/docs/hooks) (also listed in 
 
 | Conceptual hook | Cursor `hooks.json` key | Script | Behavior (v1) |
 |-----------------|-------------------------|--------|----------------|
-| pre-implementation-check | `beforeSubmitPrompt` | [pre-implementation-check.mjs](../.cursor/hooks/pre-implementation-check.mjs) | Fail-open unless `CURSOR_STRICT_PLAN_GATE=1`; then block “implementation-like” prompts without `#issue` or plan marker. |
+| pre-implementation-check | `beforeSubmitPrompt` | [pre-implementation-check.mjs](../.cursor/hooks/pre-implementation-check.mjs) | Hard gate: block implementation/workflow-execution prompts (including issue/plan-context prompts) unless they explicitly delegate to **`builder-agent`**. |
 | post-implementation-check | `afterFileEdit` + `stop` | [after-file-edit-dirty.mjs](../.cursor/hooks/after-file-edit-dirty.mjs), [stop-post-build.mjs](../.cursor/hooks/stop-post-build.mjs) | After `Write` under `src/`, create `.cursor/hooks/.dirty` (gitignored). On agent `stop` + `completed`, run `npm run build` if dirty was set. |
-| pr-open-trigger (+ branch policy) | `beforeShellExecution` | [shell-policy.mjs](../.cursor/hooks/shell-policy.mjs) | Deny `gh pr create` without `--base dev` or with `--base main`; deny `git push` targeting **`main`** or **`dev`** as destination; on valid `gh pr create`, remind to run **code-review-agent** then **ui-review-agent** (UI N/A rule applies). |
-| review-gate + builder issue labels | `subagentStart` | [subagent-start-review-gate.mjs](../.cursor/hooks/subagent-start-review-gate.mjs) → [issue-status-labels.mjs](../.cursor/hooks/issue-status-labels.mjs) | Allow all subagents; log type/task to stderr. When **builder-agent** starts (detected via `subagent_type` / task / description), set GitHub issue **`status:in-progress`** via local **`gh`** (requires auth; task must include **`#<n>`**). |
-| review-fix-loop + builder issue labels | `subagentStop` | [subagent-stop-review-loop.mjs](../.cursor/hooks/subagent-stop-review-loop.mjs) → [issue-status-labels.mjs](../.cursor/hooks/issue-status-labels.mjs) | When **builder-agent** completes successfully, set **`status:in-review`**. If `summary` contains `[[BLOCKING]]`, emit `followup_message` for `/fix-from-review` and **builder-agent**, then re-run review subagents. |
+| pr-open-trigger (+ branch policy) | `beforeShellExecution` | [shell-policy.mjs](../.cursor/hooks/shell-policy.mjs) | Deny `gh pr create` without `--base dev`, with `--base main`, or without `Closes #<n>`/`Fixes #<n>` in body text; deny `git push` targeting **`main`**/**`dev`** and deny bare `git push` while checked out on **`main`**/**`dev`**; on valid `gh pr create`, remind to run **code-review-agent** then **ui-review-agent** (UI N/A rule applies). |
+| review-gate + builder issue labels | `subagentStart` | [subagent-start-review-gate.mjs](../.cursor/hooks/subagent-start-review-gate.mjs) → [issue-status-labels.mjs](../.cursor/hooks/issue-status-labels.mjs) | Allow subagents by default. For **builder-agent**, enforce `#<n>` in delegated task/description and validate GitHub context; deny start if missing/invalid. On valid start, set GitHub issue **`status:in-progress`** via local **`gh`**; deny if label update fails. |
+| review-fix-loop + builder issue labels | `subagentStop` | [subagent-stop-review-loop.mjs](../.cursor/hooks/subagent-stop-review-loop.mjs) → [issue-status-labels.mjs](../.cursor/hooks/issue-status-labels.mjs) | When **builder-agent** completes successfully, set **`status:in-review`**. If that label update fails, emit a mandatory follow-up to fix labels before proceeding. If `summary` contains `[[BLOCKING]]`, also emit fix-loop follow-up for `/fix-from-review` and **builder-agent**. |
 
 There is only one `subagentStart` and one `subagentStop` entry in [`hooks.json`](../.cursor/hooks.json) so each hook prints a single JSON payload to stdout. Builder label logic lives in [issue-status-labels.mjs](../.cursor/hooks/issue-status-labels.mjs) and is invoked from those scripts (not as a second `hooks.json` entry) to avoid invalid combined output.
 
