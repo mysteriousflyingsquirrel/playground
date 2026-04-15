@@ -1,7 +1,7 @@
 ---
 name: code-review-agent
+model: composer-2-fast
 description: First pass of auto review — technical correctness and architecture. Run after builder-agent opens a PR; then run ui-review-agent or skip UI N/A.
-model: fast
 readonly: true
 ---
 

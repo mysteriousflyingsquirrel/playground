@@ -1,7 +1,7 @@
 ---
 name: ui-review-agent
+model: composer-2-fast
 description: Second pass of auto review — design system and UI consistency in src. Skip when no UI-relevant src files changed.
-model: fast
 readonly: true
 ---
 

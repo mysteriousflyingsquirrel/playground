@@ -18,6 +18,24 @@ Setup and maintenance checklist for this repository (stack, CI, hygiene, and Cur
 - [ ] Subagents under `.cursor/agents/*.md` reflect roles you actually delegate.
 - [ ] `.cursor/hooks.json` and `.cursor/hooks/*.mjs` stay safe on all OSes (Node-based hooks here); trusted workspace required for hooks to run.
 
+### GitHub issue status labels (automated workflow)
+
+Create these labels once in the repository (UI or CLI):
+
+- `status:in-progress`
+- `status:in-review`
+- `status:done`
+
+Example:
+
+```bash
+gh label create "status:in-progress" --color FBCA04 --description "Build / implementation in progress"
+gh label create "status:in-review" --color 1D76DB --description "PR open; awaiting review"
+gh label create "status:done" --color 0E8A16 --description "Merged to dev; issue closed"
+```
+
+Hooks move issues between the first two when **builder-agent** runs locally (`gh` must be installed and authenticated). [issue-status-on-pr-merge.yml](../.github/workflows/issue-status-on-pr-merge.yml) applies `status:done` and closes linked issues when a PR merges into `dev`.
+
 ### Review and verification
 
 - [ ] Add `.github/pull_request_template.md` if missing.
@@ -50,6 +68,10 @@ Setup and maintenance checklist for this repository (stack, CI, hygiene, and Cur
 - Optional strict plan gate: set environment variable `CURSOR_STRICT_PLAN_GATE=1` (see architecture doc) for stricter `beforeSubmitPrompt` behavior.
 
 ## Change Log
+
+### 2026-04-14
+
+- Documented GitHub issue status labels (`status:in-progress`, `status:in-review`, `status:done`); hooks + [.github/workflows/issue-status-on-pr-merge.yml](../.github/workflows/issue-status-on-pr-merge.yml) automate transitions around **builder-agent** and PR merge to `dev`.
 
 ### 2026-04-12
 

@@ -45,7 +45,7 @@ Issue #42 — [short title]. Paste the issue goal and acceptance criteria here i
 **Prompt:**
 
 ```text
-Delegate builder-agent for issue #42. Hand off: (1) issue link or number and acceptance criteria, (2) the full approved plan from the previous step, (3) branch name feature/issue-42-[short-slug]. The builder must create that branch from latest dev, implement, run npm run build, push only the feature branch, and run: gh pr create --base dev --title "feat: …" --body "Closes #42". Do not merge the PR.
+Delegate builder-agent for issue #42. Hand off: (1) issue link or number and acceptance criteria, (2) the full approved plan from the previous step, (3) branch name feature/issue-42-[short-slug]. The delegated task must include **#42** so hooks can set **status:in-progress** / **status:in-review**. The builder must create that branch from latest dev, implement, run npm run build, push only the feature branch, and run: gh pr create --base dev --title "feat: …" --body "Closes #42". Do not merge the PR.
 ```
 
 ---

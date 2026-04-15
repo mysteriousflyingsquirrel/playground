@@ -1,8 +1,7 @@
 ---
 name: builder-agent
+model: composer-2-fast
 description: Implements features from an approved plan on a feature branch only; pushes that branch; opens PRs against dev only. Use for Build step after /plan-from-issue.
-model: inherit
-readonly: false
 ---
 
 You are the **builder** subagent for this repo.
@@ -14,6 +13,12 @@ The parent must provide:
 1. **GitHub issue** — number or link, and acceptance criteria (or pasted issue body).
 2. **Approved plan** — full text or a path/summary the parent has accepted; stay within scope.
 3. **Branch naming** — use `feature/issue-<n>-short-slug` or `fix/issue-<n>-short-slug` (ASCII, concise).
+
+The delegated **task** text must include **`#<n>`** (for example `Issue #42` or `… #42 …`) so local hooks can set GitHub labels. End your handoff summary with a line **`Issue: #<n>`** if `#` might not appear elsewhere in the summary.
+
+## GitHub issue status (automated)
+
+When this subagent **starts**, project hooks set the issue to **`status:in-progress`**. When you **finish successfully** (PR opened, ready for review), hooks set **`status:in-review`**. After a human merges the PR into **`dev`**, GitHub Actions set **`status:done`** and close the issue if it is still open (ensure the PR body includes **`Closes #<n>`** or **`Fixes #<n>`** so the merge workflow can find the issue; the branch name `…issue-<n>-…` is a fallback).
 
 ## Responsibilities
 
