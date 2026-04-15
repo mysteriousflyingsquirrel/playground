@@ -1,7 +1,6 @@
 /**
  * Maps to conceptual hook: pre-implementation-check (beforeSubmitPrompt).
- * Default: fail-open. Set CURSOR_STRICT_PLAN_GATE=1 to block prompts that look
- * like implementation starts without an issue ref (#nnn) or plan marker.
+ * Hard gate: implementation must be delegated to builder-agent.
  */
 import fs from 'node:fs'
 
@@ -20,21 +19,22 @@ try {
 }
 
 const prompt = String(payload.prompt || '')
-const strict = process.env.CURSOR_STRICT_PLAN_GATE === '1'
-
 const looksImplement =
-  /\b(implement|build\s+out|add\s+(a\s+)?feature|write\s+code|start\s+(coding|implementation))\b/i.test(
+  /\b(implement|implementation|build(\s+out)?|write\s+code|start\s+(coding|implementation)|code\s+it|create|add|fix|change|modify|update|ship|deliver)\b/i.test(
     prompt
-  )
+  ) || /\b(do\s+it|go\s+ahead)\b/i.test(prompt)
 
-const hasIssue = /#\d+/.test(prompt)
-const hasPlan = /\bPLAN:\b|\.cursor\/plans\//i.test(prompt)
+const referencesWorkflowContext = /#\d+|\.cursor\/plans\/|\/plan-from-issue|approved\s+plan/i.test(
+  prompt
+)
 
-if (strict && looksImplement && !hasIssue && !hasPlan) {
+const mentionsBuilderAgent = /\bbuilder-agent\b/i.test(prompt)
+
+if ((looksImplement || referencesWorkflowContext) && !mentionsBuilderAgent) {
   out({
     continue: false,
     user_message:
-      'Implementation-style prompt blocked until you add an issue reference (#123) or an explicit plan marker (e.g. PLAN: or .cursor/plans/...). Unset strict mode by removing CURSOR_STRICT_PLAN_GATE=1.',
+      'Implementation is blocked unless it is explicitly delegated to builder-agent. Re-run using builder-agent with the approved plan and issue number (for example: "delegate builder-agent for Issue #16").',
   })
   process.exit(0)
 }
