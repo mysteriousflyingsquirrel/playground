@@ -99,7 +99,7 @@ There is only one `subagentStart` and one `subagentStop` entry in [`hooks.json`]
 ## Out of scope for Cursor hooks
 
 - **GitHub “PR opened” webhooks** and org-level automation are not replaced by project hooks; use **GitHub Actions** or integrations for server-side rules.
-- **PR merged into `dev`** — setting issue **`status:done`**, removing prior status labels, and **closing** linked issues are implemented in [.github/workflows/issue-status-on-pr-merge.yml](../.github/workflows/issue-status-on-pr-merge.yml) (not in Cursor hooks).
+- **PR merged into `dev`** — setting issue **`status:done`**, removing prior status labels, and **closing** linked issues are implemented in [.github/workflows/issue-status-on-pr-merge.yml](../.github/workflows/issue-status-on-pr-merge.yml). Merged same-repo feature branches are deleted by [.github/workflows/delete-feature-branch-on-merge.yml](../.github/workflows/delete-feature-branch-on-merge.yml) (not in Cursor hooks).
 - **Team-wide enforcement** may use Cursor **Team Rules** / enterprise features ([Rules](https://cursor.com/docs/rules)) in addition to this repo.
 
 ---

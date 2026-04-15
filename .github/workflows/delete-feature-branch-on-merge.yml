@@ -1,0 +1,41 @@
+name: Delete feature branch on merge to dev
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  delete-head-branch:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'dev'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+
+    steps:
+      - name: Delete merged feature branch
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request
+            const owner = context.repo.owner
+            const repo = context.repo.repo
+
+            // Only delete branches in this same repository.
+            if (!pr.head.repo || pr.head.repo.full_name !== `${owner}/${repo}`) {
+              core.info('Skipping delete: head branch is from a fork.')
+              return
+            }
+
+            const ref = pr.head.ref
+            if (ref === 'dev' || ref === 'main') {
+              core.info(`Skipping delete for protected branch: ${ref}`)
+              return
+            }
+
+            await github.request('DELETE /repos/{owner}/{repo}/git/refs/{ref}', {
+              owner,
+              repo,
+              ref: `heads/${ref}`,
+            })
+            core.info(`Deleted merged branch: ${ref}`)
