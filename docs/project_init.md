@@ -22,6 +22,7 @@ Setup and maintenance checklist for this repository (stack, CI, hygiene, and Cur
 
 Create these labels once in the repository (UI or CLI):
 
+- `status:needs-plan`
 - `status:in-progress`
 - `status:in-review`
 - `status:done`
@@ -29,16 +30,25 @@ Create these labels once in the repository (UI or CLI):
 Example:
 
 ```bash
+gh label create "status:needs-plan" --color 4D8CFE --description "Issue is created and needs planning."
 gh label create "status:in-progress" --color FBCA04 --description "Build / implementation in progress"
 gh label create "status:in-review" --color 1D76DB --description "PR open; awaiting review"
 gh label create "status:done" --color 0E8A16 --description "Merged to dev; issue closed"
 ```
 
-Hooks move issues between the first two when **builder-agent** runs locally (`gh` must be installed and authenticated). [issue-status-on-pr-merge.yml](../.github/workflows/issue-status-on-pr-merge.yml) applies `status:done` and closes linked issues when a PR merges into `dev`.
+Only one `status:*` label should exist at a time. Hooks move issues from `needs-plan` to `in-progress` to `in-review` when **builder-agent** runs locally (`gh` must be installed and authenticated). [issue-status-on-pr-merge.yml](../.github/workflows/issue-status-on-pr-merge.yml) applies `status:done`, removes the other status labels, and closes linked issues when a PR merges into `dev`.
+
+### GitHub branch protection and PR requirements
+
+- [ ] Protect `dev` from direct pushes; require pull requests.
+- [ ] Protect `main` from direct pushes; require pull requests.
+- [ ] Require the repo's CI checks on PRs into `dev` and `main` (at minimum the current build check).
+- [ ] Keep `.github/pull_request_template.md` aligned with the PR body contract: `## Summary`, `## Test plan`, and `Closes #n`.
+- [ ] Keep merged-branch cleanup automation enabled for same-repo branches.
 
 ### Review and verification
 
-- [ ] Add `.github/pull_request_template.md` if missing.
+- [ ] Keep `.github/pull_request_template.md` aligned with the current operating model.
 - [ ] Add `.github/workflows/` with the smallest useful CI check set.
 - [ ] Document only commands that exist in `package.json`.
 - [ ] Add `lint`, `typecheck`, and `test` only after the corresponding tooling is installed.
@@ -65,13 +75,13 @@ Hooks move issues between the first two when **builder-agent** runs locally (`gh
 ### Notes
 
 - No `lint`, `typecheck`, or `test` script is installed yet.
-- Optional strict plan gate: set environment variable `CURSOR_STRICT_PLAN_GATE=1` (see architecture doc) for stricter `beforeSubmitPrompt` behavior.
+- Builder and review workflow is local-first. If cloud execution is introduced later, document auth, secrets, network, and testability prerequisites before relying on it.
 
 ## Change Log
 
 ### 2026-04-14
 
-- Documented GitHub issue status labels (`status:in-progress`, `status:in-review`, `status:done`); hooks + [.github/workflows/issue-status-on-pr-merge.yml](../.github/workflows/issue-status-on-pr-merge.yml) automate transitions around **builder-agent** and PR merge to `dev`.
+- Documented GitHub issue status labels (`status:needs-plan`, `status:in-progress`, `status:in-review`, `status:done`); hooks + [.github/workflows/issue-status-on-pr-merge.yml](../.github/workflows/issue-status-on-pr-merge.yml) automate transitions around **builder-agent** and PR merge to `dev`.
 
 ### 2026-04-12
 

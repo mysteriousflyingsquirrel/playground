@@ -34,6 +34,15 @@ function printDeny(userMessage, agentMessage) {
   )
 }
 
+// Block Git worktrees — agents must use a single clone + feature branch.
+if (/\bgit(\.exe)?\s+worktree\s+add\b/i.test(command)) {
+  printDeny(
+    'Git worktree creation is blocked by project policy.',
+    'Do not run git worktree add. Work in the primary checkout only; create a feature branch with git checkout -b instead.'
+  )
+  process.exit(0)
+}
+
 // Block pushes to protected branches (explicit refspecs only)
 if (/\bgit\s+push\b/i.test(command)) {
   const pushToMain =
@@ -108,7 +117,7 @@ if (/\bgh(\.exe)?\s+pr\s+create\b/i.test(command)) {
     JSON.stringify({
       permission: 'allow',
       agent_message:
-        'PR targets dev. Next: delegate code-review-agent, then ui-review-agent (skip ui-review-agent with UI N/A if no src/**/*.{js,jsx,css} changed).',
+        'PR targets dev and links issue closure. Keep the PR body current with ## Summary, ## Test plan, and Closes/Fixes #n after each push (for example with gh pr edit). Next: delegate code-review-agent, then ui-review-agent (skip ui-review-agent with UI N/A if no src/**/*.{js,jsx,css} changed).',
     })
   )
   process.exit(0)

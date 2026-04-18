@@ -8,9 +8,14 @@ alwaysApply: false
 ## Default branch and integration
 
 - **Feature branches** merge via pull request into **`dev`**, not `main`.
-- **Automated agents** (subagents, cloud agent, and similar): implement only on a **feature branch**; **push only that branch**; open PRs with **`gh pr create --base dev`** (or equivalent). They must **not** push to **`dev`** or **`main`**, merge into those branches, or commit while checked out on **`dev`**/**`main`**.
+- **Automated agents** (subagents, cloud agent, and similar): implement only on a **feature branch** in the **primary clone**; **push only that branch**; open PRs with **`gh pr create --base dev`** (or equivalent). They must **not** push to **`dev`** or **`main`**, merge into those branches, or commit while checked out on **`dev`**/**`main`**.
 - **Humans** merge approved PRs into **`dev`** and later promote **`dev` → `main`**.
 - **Never** target **`main`** with agent-created PRs, direct pushes to `main`, or agent-driven merges into `main`.
+
+## No Git worktrees (hard rule)
+
+- **Automated agents** must **not** create extra checkouts with **`git worktree add`** (no sibling folders like `…-issue-<n>` for parallel trees). Work only in the user’s primary clone; use a normal feature branch.
+- Local **`beforeShellExecution`** hook denies **`git worktree add`** so agent shells cannot create worktrees in-repo.
 
 ## Builder-only implementation (hard rule)
 
@@ -18,19 +23,42 @@ alwaysApply: false
 - The primary agent must not directly implement feature code in Agent mode or Plan mode.
 - Implementation requests must explicitly mention **`builder-agent`** in the prompt/task.
 - Builder delegation tasks must include an issue reference (**`#<n>`**) so local hooks can update GitHub status labels.
+- Builder handoff should include an accepted plan path or approved plan summary saved in the workspace.
 
 ## GitHub label workflow (required)
 
-- On `builder-agent` start, hooks set issue label **`status:in-progress`**.
-- On successful `builder-agent` completion (PR ready), hooks set **`status:in-review`**.
-- PR body must include **`Closes #<n>`** or **`Fixes #<n>`** so merge automation can set **`status:done`** on merge to `dev`.
+- Only one status label should exist on an issue at a time: **`status:needs-plan`**, **`status:in-progress`**, **`status:in-review`**, or **`status:done`**.
+- New issues start as **`status:needs-plan`**.
+- On `builder-agent` start, hooks set issue label **`status:in-progress`** and remove the other status labels.
+- On successful `builder-agent` completion (PR ready), hooks set **`status:in-review`** and remove the other status labels.
+- On merge to `dev`, GitHub Actions set **`status:done`**, remove the other status labels, and close the issue.
+- In this workflow, **`status:done`** means **merged to `dev`**, not human-tested and not promoted to `main`.
 - If `#<n>` is missing from builder delegation, hook enforcement blocks builder startup.
+
+## PR body contract (required)
+
+- Every PR must include:
+
+  ```md
+  ## Summary
+  - Bullet list of what changed
+
+  ## Test plan
+  - [ ] Verification step(s)
+
+  Closes #<n>
+  ```
+
+- `builder-agent` creates the PR with this shape and refreshes the **Summary** after each meaningful push via `gh pr edit`.
+- `Closes #<n>` or `Fixes #<n>` must survive every PR body update so merge automation can still set **`status:done`**.
+- Local shell hooks currently enforce PR base and issue-closing keywords. The **Summary** contract is enforced by builder instructions, the PR template, and review discipline rather than brittle shell parsing.
 
 ## Promotion to main
 
 - **`dev` → `main`** is a **human-controlled** release step, after checks on `dev` and the [release-readiness](@.cursor/skills/release-readiness/SKILL.md) checklist.
 - Agents deliver work via PRs into `dev`; they do not complete the production promotion.
 
-## CI note
+## GitHub settings note
 
-- GitHub Actions for this repo currently run on pushes to `main` and on pull requests ([.github/workflows/ci.yml](@.github/workflows/ci.yml)). Consider extending CI to validate PRs into `dev` as a follow-up so `dev` stays green.
+- Protect `dev` and `main` in GitHub. Require pull requests and the required checks documented in [docs/project_init.md](@docs/project_init.md).
+- GitHub Actions in this repo currently cover merge-to-`dev` label/closure automation and branch deletion, plus CI checks under [.github/workflows/](@.github/workflows/).

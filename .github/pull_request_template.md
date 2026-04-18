@@ -2,15 +2,20 @@
 
 - What changed?
 - Why was it needed?
+- Keep this section current after each push so reviewers always see the latest scope.
+
+## Test plan
+
+- [ ] `npm run build`
+- [ ] Other relevant checks, if applicable
+
+## Issue
+
+Closes #<issue-number>
 
 ## Plan
 
 - Link the accepted plan if one exists.
-
-## Verification
-
-- [ ] `npm run build`
-- [ ] Other relevant checks, if applicable
 
 ## UI Notes
 

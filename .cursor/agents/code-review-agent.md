@@ -22,6 +22,6 @@ You run **first**, before **ui-review-agent**. If you find no blocking issues, t
 - **Verdict:** `approve` | `request_changes`
 - **Summary:** short paragraph.
 - **Findings:** bullet list with severity `suggestion` | `important` | `blocking`.
-- If merge should **not** proceed until fixes land, include this exact token on its own line in your response: **`[[BLOCKING]]`**
+- If any finding is truly merge-blocking or merge should **not** proceed until fixes land, include this exact token on its own line in your response: **`[[BLOCKING]]`**. Do not rely on the word `blocking` in prose alone.
 
 The parent and hooks use **`[[BLOCKING]]`** to trigger **`/fix-from-review`** and another **builder-agent** pass, then a full re-review (you again, then **ui-review-agent** with the same UI N/A rule).

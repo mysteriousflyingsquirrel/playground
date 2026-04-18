@@ -26,6 +26,6 @@ If UI N/A, the parent skips delegating you and states **UI N/A** in the thread.
 - **Verdict:** `approve` | `request_changes`
 - **Summary:** short paragraph.
 - **Findings:** bullet list with severity `suggestion` | `important` | `blocking`.
-- If the UI should not merge until fixed, include: **`[[BLOCKING]]`** on its own line.
+- If any UI finding is truly merge-blocking or the UI should not merge until fixed, include **`[[BLOCKING]]`** on its own line. Do not rely on the word `blocking` in prose alone.
 
 This token ties into the review fix loop in project hooks.
