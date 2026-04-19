@@ -7,15 +7,12 @@
 ## Test plan
 
 - [ ] `npm run build`
+- [ ] `/build-and-run` completed locally
 - [ ] Other relevant checks, if applicable
 
 ## Issue
 
 Closes #<issue-number>
-
-## Plan
-
-- Link the accepted plan if one exists.
 
 ## UI Notes
 

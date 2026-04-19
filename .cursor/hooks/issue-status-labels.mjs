@@ -1,17 +1,17 @@
 /**
- * GitHub issue status labels for builder-agent lifecycle (hooks + shared helpers).
+ * GitHub issue status labels for coding-clanker lifecycle (hooks + shared helpers).
  * Fail-open: never throws; logs to stderr on recoverable gh failures.
  */
 import { execSync, spawnSync } from 'node:child_process'
 
 export const STATUS = {
-  needsPlan: 'status:needs-plan',
+  todo: 'status:todo',
   inProgress: 'status:in-progress',
   inReview: 'status:in-review',
   done: 'status:done',
 }
 
-const ALL_STATUS = [STATUS.needsPlan, STATUS.inProgress, STATUS.inReview, STATUS.done]
+const ALL_STATUS = [STATUS.todo, STATUS.inProgress, STATUS.inReview, STATUS.done]
 
 export function extractIssueNumber(...texts) {
   for (const t of texts) {
@@ -63,18 +63,26 @@ function removeStatusLabels(repo, issue, except) {
   }
 }
 
-export function isBuilderSubagent(payload) {
+export function isCodingClankerSubagent(payload) {
   const typ = String(payload.subagent_type || '')
-  if (typ === 'builder-agent' || typ === 'builder_agent') return true
+  if (
+    typ === 'coding-clanker' ||
+    typ === 'coding_clanker' ||
+    typ === 'builder-agent' ||
+    typ === 'builder_agent'
+  )
+    return true
   const task = String(payload.task || '')
+  if (/\bcoding-clanker\b/i.test(task)) return true
   if (/\bbuilder-agent\b/i.test(task)) return true
   const desc = String(payload.description || '')
+  if (/coding/i.test(desc) && /clanker/i.test(desc) && /approved plan/i.test(desc)) return true
   if (/builder/i.test(desc) && /approved plan/i.test(desc)) return true
   return false
 }
 
-export function validateBuilderIssueContext(payload) {
-  if (!isBuilderSubagent(payload)) return { ok: true, issue: null, repo: null }
+export function validateCodingClankerIssueContext(payload) {
+  if (!isCodingClankerSubagent(payload)) return { ok: true, issue: null, repo: null }
   const issue = extractIssueNumber(payload.task, payload.description, payload.summary)
   if (!issue) return { ok: false, reason: 'missing_issue' }
   const repo = getRepoSlug()
@@ -83,10 +91,10 @@ export function validateBuilderIssueContext(payload) {
 }
 
 /**
- * subagentStart: transition to status:in-progress when builder starts.
+ * subagentStart: transition to status:in-progress when coding-clanker starts.
  */
-export function applyBuilderStartLabel(payload) {
-  if (!isBuilderSubagent(payload)) return { ok: true, skipped: true }
+export function applyCodingClankerStartLabel(payload) {
+  if (!isCodingClankerSubagent(payload)) return { ok: true, skipped: true }
   const issue = extractIssueNumber(payload.task, payload.description, payload.summary)
   if (!issue) {
     log('skip in-progress: no #issue in task')
@@ -107,10 +115,10 @@ export function applyBuilderStartLabel(payload) {
 }
 
 /**
- * subagentStop: transition to status:in-review when builder completes successfully.
+ * subagentStop: transition to status:in-review when local coding-clanker work completes successfully.
  */
-export function applyBuilderStopLabel(payload) {
-  if (!isBuilderSubagent(payload)) return { ok: true, skipped: true }
+export function applyCodingClankerStopLabel(payload) {
+  if (!isCodingClankerSubagent(payload)) return { ok: true, skipped: true }
   if (payload.status !== 'completed') return { ok: true, skipped: true }
   const issue = extractIssueNumber(payload.task, payload.summary)
   if (!issue) {

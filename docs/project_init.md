@@ -16,13 +16,13 @@ Setup and maintenance checklist for this repository (stack, CI, hygiene, and Cur
 - [ ] Rules under `.cursor/rules/` match team policy; see [cursor-operating-model-architecture.md](cursor-operating-model-architecture.md).
 - [ ] Skills under `.cursor/skills/<name>/SKILL.md` stay in sync with workflow changes.
 - [ ] Subagents under `.cursor/agents/*.md` reflect roles you actually delegate.
-- [ ] `.cursor/hooks.json` and `.cursor/hooks/*.mjs` stay safe on all OSes (Node-based hooks here); trusted workspace required for hooks to run.
+- [ ] `.cursor/hooks.json` and the remaining `.cursor/hooks/*.mjs` stay safe on all OSes (Node-based hooks here); trusted workspace required for hooks to run.
 
 ### GitHub issue status labels (automated workflow)
 
 Create these labels once in the repository (UI or CLI):
 
-- `status:needs-plan`
+- `status:todo`
 - `status:in-progress`
 - `status:in-review`
 - `status:done`
@@ -30,13 +30,13 @@ Create these labels once in the repository (UI or CLI):
 Example:
 
 ```bash
-gh label create "status:needs-plan" --color 4D8CFE --description "Issue is created and needs planning."
+gh label create "status:todo" --color 4D8CFE --description "Issue exists and local implementation has not started."
 gh label create "status:in-progress" --color FBCA04 --description "Build / implementation in progress"
-gh label create "status:in-review" --color 1D76DB --description "PR open; awaiting review"
+gh label create "status:in-review" --color 1D76DB --description "Local implementation or PR is awaiting review"
 gh label create "status:done" --color 0E8A16 --description "Merged to dev; issue closed"
 ```
 
-Only one `status:*` label should exist at a time. Hooks move issues from `needs-plan` to `in-progress` to `in-review` when **builder-agent** runs locally (`gh` must be installed and authenticated). [issue-status-on-pr-merge.yml](../.github/workflows/issue-status-on-pr-merge.yml) applies `status:done`, removes the other status labels, and closes linked issues when a PR merges into `dev`.
+Only one `status:*` label should exist at a time. Hooks move issues from `todo` to `in-progress` to `in-review` when **coding-clanker** runs locally (`gh` must be installed and authenticated). **`github-clanker`** publishes the reviewed feature branch with a PR into `dev`. [issue-status-on-pr-merge.yml](../.github/workflows/issue-status-on-pr-merge.yml) applies `status:done`, removes the other status labels, and closes linked issues when a PR merges into `dev`.
 
 ### GitHub branch protection and PR requirements
 
@@ -65,9 +65,9 @@ Only one `status:*` label should exist at a time. Hooks move issues from `needs-
 |------|--------|
 | Agent instructions | [AGENTS.md](../AGENTS.md) |
 | Project rules | `.cursor/rules/ui-system.mdc`, `.cursor/rules/architecture.mdc`, `.cursor/rules/git-workflow.mdc` |
-| Skills | `.cursor/skills/plan-from-issue/`, `code-review/`, `ui-review/`, `fix-from-review/`, `release-readiness/` (each contains `SKILL.md`) |
-| Subagents | `.cursor/agents/builder-agent.md`, `code-review-agent.md`, `ui-review-agent.md` |
-| Hooks | `.cursor/hooks.json`, `.cursor/hooks/*.mjs` |
+| Skills | `.cursor/skills/plan-from-issue/`, `build-and-run/`, `code-review/`, `ui-review/`, `github-publish/` (each contains `SKILL.md`) |
+| Subagents | `.cursor/agents/coding-clanker.md`, `code-review-clanker.md`, `ui-review-clanker.md`, `github-clanker.md` |
+| Hooks | `.cursor/hooks.json`, `shell-policy.mjs`, `subagent-start-review-gate.mjs`, `subagent-stop-review-loop.mjs`, `issue-status-labels.mjs` |
 | Architecture map | [docs/cursor-operating-model-architecture.md](cursor-operating-model-architecture.md) |
 | Overview | [docs/cursor-system-overview.md](cursor-system-overview.md) |
 | Doc index | [docs/cursor_sources.md](cursor_sources.md) |
@@ -75,13 +75,19 @@ Only one `status:*` label should exist at a time. Hooks move issues from `needs-
 ### Notes
 
 - No `lint`, `typecheck`, or `test` script is installed yet.
-- Builder and review workflow is local-first. If cloud execution is introduced later, document auth, secrets, network, and testability prerequisites before relying on it.
+- The visible human workflow is: GitHub issue outside Cursor, `/plan-from-issue #n`, the accepted plan’s Build button, `/build-and-run`, `/code-review`, `/ui-review`, and `/github-publish #n`.
+- `coding-clanker` owns implementation, review agents are report-only, and `github-clanker` owns commit, push, and PR publication. If cloud execution is introduced later, document auth, secrets, network, and testability prerequisites before relying on it.
 
 ## Change Log
 
+### 2026-04-18
+
+- Simplified the visible human UX to `Issue outside Cursor -> /plan-from-issue #n -> Build button -> /build-and-run -> /code-review -> /ui-review -> /github-publish #n -> Dev -> Human integration test -> Main`.
+- Trimmed the workflow-specific hooks down to shell policy plus coding-clanker label automation, and removed older fix-loop and release-readiness skill steps from the main operating model.
+
 ### 2026-04-14
 
-- Documented GitHub issue status labels (`status:needs-plan`, `status:in-progress`, `status:in-review`, `status:done`); hooks + [.github/workflows/issue-status-on-pr-merge.yml](../.github/workflows/issue-status-on-pr-merge.yml) automate transitions around **builder-agent** and PR merge to `dev`.
+- Documented GitHub issue status labels (`status:todo`, `status:in-progress`, `status:in-review`, `status:done`); hooks + [.github/workflows/issue-status-on-pr-merge.yml](../.github/workflows/issue-status-on-pr-merge.yml) automate transitions around **coding-clanker** and PR merge to `dev`.
 
 ### 2026-04-12
 

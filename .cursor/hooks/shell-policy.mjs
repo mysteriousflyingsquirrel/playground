@@ -1,5 +1,5 @@
 /**
- * Conceptual: pr-open-trigger + strict PR base dev / no push to main or dev.
+ * Conceptual: feature-branch safety + strict PR base dev / no push to main or dev.
  * beforeShellExecution — return permission JSON.
  */
 import fs from 'node:fs'
@@ -117,7 +117,7 @@ if (/\bgh(\.exe)?\s+pr\s+create\b/i.test(command)) {
     JSON.stringify({
       permission: 'allow',
       agent_message:
-        'PR targets dev and links issue closure. Keep the PR body current with ## Summary, ## Test plan, and Closes/Fixes #n after each push (for example with gh pr edit). Next: delegate code-review-agent, then ui-review-agent (skip ui-review-agent with UI N/A if no src/**/*.{js,jsx,css} changed).',
+        'PR targets dev and links issue closure. Keep the PR body current with ## Summary, ## Test plan, and Closes/Fixes #n after each push (for example with gh pr edit). Humans own merges into dev and main.',
     })
   )
   process.exit(0)

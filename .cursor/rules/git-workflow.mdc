@@ -8,32 +8,50 @@ alwaysApply: false
 ## Default branch and integration
 
 - **Feature branches** merge via pull request into **`dev`**, not `main`.
-- **Automated agents** (subagents, cloud agent, and similar): implement only on a **feature branch** in the **primary clone**; **push only that branch**; open PRs with **`gh pr create --base dev`** (or equivalent). They must **not** push to **`dev`** or **`main`**, merge into those branches, or commit while checked out on **`dev`**/**`main`**.
+- **Automated agents** (subagents, cloud agent, and similar): work only on a **feature branch** in the **primary clone**. **`coding-clanker`** creates or reuses the branch and implements locally. **`github-clanker`** commits and pushes **only that branch** and opens PRs with **`gh pr create --base dev`** (or equivalent). Agents must **not** push to **`dev`** or **`main`**, merge into those branches, or commit while checked out on **`dev`** or **`main`**.
 - **Humans** merge approved PRs into **`dev`** and later promote **`dev` → `main`**.
 - **Never** target **`main`** with agent-created PRs, direct pushes to `main`, or agent-driven merges into `main`.
+
+## Human command surface
+
+- The intended human workflow is: issue outside Cursor, **`/plan-from-issue #n`**, the accepted plan’s **Build** button, **`/build-and-run [app]`**, **`/code-review`**, **`/ui-review`**, and **`/github-publish #n`**.
+- Cursor does **not** expose a repo-local way to hard-bind the Build button to a named subagent. This repo therefore steers Build toward **`coding-clanker`** with rules, plan handoff wording, and subagent descriptions.
 
 ## No Git worktrees (hard rule)
 
 - **Automated agents** must **not** create extra checkouts with **`git worktree add`** (no sibling folders like `…-issue-<n>` for parallel trees). Work only in the user’s primary clone; use a normal feature branch.
 - Local **`beforeShellExecution`** hook denies **`git worktree add`** so agent shells cannot create worktrees in-repo.
 
-## Builder-only implementation (hard rule)
+## Coding-clanker-only implementation (hard rule)
 
-- After plan acceptance, **all implementation must be delegated to `builder-agent`**.
+- After plan acceptance, Build starts immediately and **all implementation must go through `coding-clanker`**.
 - The primary agent must not directly implement feature code in Agent mode or Plan mode.
-- Implementation requests must explicitly mention **`builder-agent`** in the prompt/task.
-- Builder delegation tasks must include an issue reference (**`#<n>`**) so local hooks can update GitHub status labels.
-- Builder handoff should include an accepted plan path or approved plan summary saved in the workspace.
+- The accepted plan’s **Build** button is the intended path. If a manual fallback is ever needed, the coding-clanker handoff must include an issue reference (**`#<n>`**) so local hooks can update GitHub status labels.
+- Coding-clanker handoff should include an accepted plan path or approved plan summary saved in the workspace.
+- `coding-clanker` creates or reuses the feature branch, implements, runs **`npm run build`**, and stops before commit, push, or PR work.
+
+## GitHub publish (hard rule)
+
+- Commit, push, and PR creation or update must be delegated to **`github-clanker`**.
+- `github-clanker` runs only after human feature review or test via **`/build-and-run`** and any manual review-agent passes are ready.
+- `github-clanker` may commit and push only the current feature branch and must target **`dev`** with the PR.
+
+## Review agents (hard rule)
+
+- **`code-review-clanker`** and **`ui-review-clanker`** are report-only.
+- Humans invoke review agents manually via **`/code-review`** and **`/ui-review`**; they are not the automatic start of Build.
+- If review finds issues, the parent routes implementation back through **`coding-clanker`** by reusing the accepted plan’s **Build** step on the same feature branch.
 
 ## GitHub label workflow (required)
 
-- Only one status label should exist on an issue at a time: **`status:needs-plan`**, **`status:in-progress`**, **`status:in-review`**, or **`status:done`**.
-- New issues start as **`status:needs-plan`**.
-- On `builder-agent` start, hooks set issue label **`status:in-progress`** and remove the other status labels.
-- On successful `builder-agent` completion (PR ready), hooks set **`status:in-review`** and remove the other status labels.
+- Only one status label should exist on an issue at a time: **`status:todo`**, **`status:in-progress`**, **`status:in-review`**, or **`status:done`**.
+- New issues start as **`status:todo`**.
+- On `coding-clanker` start, hooks set issue label **`status:in-progress`** and remove the other status labels.
+- On successful `coding-clanker` completion (local implementation ready), hooks set **`status:in-review`** and remove the other status labels.
 - On merge to `dev`, GitHub Actions set **`status:done`**, remove the other status labels, and close the issue.
+- In this workflow, **`status:in-review`** means local implementation is ready for human or review-agent feedback, or a PR is open and awaiting review.
 - In this workflow, **`status:done`** means **merged to `dev`**, not human-tested and not promoted to `main`.
-- If `#<n>` is missing from builder delegation, hook enforcement blocks builder startup.
+- If `#<n>` is missing from coding-clanker delegation, hook enforcement blocks coding-clanker startup.
 
 ## PR body contract (required)
 
@@ -49,13 +67,13 @@ alwaysApply: false
   Closes #<n>
   ```
 
-- `builder-agent` creates the PR with this shape and refreshes the **Summary** after each meaningful push via `gh pr edit`.
+- `github-clanker` creates the PR with this shape and refreshes the **Summary** after each meaningful push via `gh pr edit`.
 - `Closes #<n>` or `Fixes #<n>` must survive every PR body update so merge automation can still set **`status:done`**.
-- Local shell hooks currently enforce PR base and issue-closing keywords. The **Summary** contract is enforced by builder instructions, the PR template, and review discipline rather than brittle shell parsing.
+- Local shell hooks currently enforce PR base and issue-closing keywords. The **Summary** contract is enforced by `github-clanker`, the PR template, and review discipline rather than brittle shell parsing.
 
 ## Promotion to main
 
-- **`dev` → `main`** is a **human-controlled** release step, after checks on `dev` and the [release-readiness](@.cursor/skills/release-readiness/SKILL.md) checklist.
+- **`dev` → `main`** is a **human-controlled** release step after checks on `dev`.
 - Agents deliver work via PRs into `dev`; they do not complete the production promotion.
 
 ## GitHub settings note

@@ -1,26 +1,6 @@
 {
   "version": 1,
   "hooks": {
-    "beforeSubmitPrompt": [
-      {
-        "command": "node .cursor/hooks/pre-implementation-check.mjs",
-        "timeout": 8
-      }
-    ],
-    "afterFileEdit": [
-      {
-        "command": "node .cursor/hooks/after-file-edit-dirty.mjs",
-        "matcher": "Write",
-        "timeout": 8
-      }
-    ],
-    "stop": [
-      {
-        "command": "node .cursor/hooks/stop-post-build.mjs",
-        "timeout": 180,
-        "loop_limit": 5
-      }
-    ],
     "beforeShellExecution": [
       {
         "command": "node .cursor/hooks/shell-policy.mjs",

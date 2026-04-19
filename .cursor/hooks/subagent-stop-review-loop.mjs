@@ -1,9 +1,9 @@
 /**
- * review-fix-loop — if subagent summary contains [[BLOCKING]], nudge fix-from-review + builder + re-review.
- * When builder-agent completes successfully, set GitHub issue label status:in-review (see issue-status-labels.mjs).
+ * manual-review-followup — if subagent summary contains [[BLOCKING]], nudge coding-clanker + re-review.
+ * When coding-clanker completes successfully, set GitHub issue label status:in-review (see issue-status-labels.mjs).
  */
 import fs from 'node:fs'
-import { applyBuilderStopLabel } from './issue-status-labels.mjs'
+import { applyCodingClankerStopLabel } from './issue-status-labels.mjs'
 
 const stdin = fs.readFileSync(0, 'utf8')
 let payload = {}
@@ -14,7 +14,7 @@ try {
   process.exit(0)
 }
 
-const stopResult = applyBuilderStopLabel(payload)
+const stopResult = applyCodingClankerStopLabel(payload)
 
 const summary = String(payload.summary || '')
 if (!summary.includes('[[BLOCKING]]') && (stopResult?.ok || stopResult?.skipped)) {
@@ -25,12 +25,12 @@ if (!summary.includes('[[BLOCKING]]') && (stopResult?.ok || stopResult?.skipped)
 const messages = []
 if (summary.includes('[[BLOCKING]]')) {
   messages.push(
-    'Subagent reported [[BLOCKING]]. Run /fix-from-review, delegate builder-agent on the same feature branch, then re-run code-review-agent and ui-review-agent (or UI N/A per ui-review-agent instructions).'
+    'Subagent reported [[BLOCKING]]. Click Build on the accepted plan again, then re-run /build-and-run, /code-review, and /ui-review (or UI N/A per ui-review-clanker instructions). Use /github-publish only after the branch is ready.'
   )
 }
 if (!(stopResult?.ok || stopResult?.skipped)) {
   messages.push(
-    'builder-agent completed but issue label transition to status:in-review failed. Fix gh auth/permissions and update labels manually before proceeding.'
+    'coding-clanker completed but issue label transition to status:in-review failed. Fix gh auth/permissions and update labels manually before proceeding.'
   )
 }
 
