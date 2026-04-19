@@ -4,6 +4,7 @@ import Calculator from './pages/Calculator.jsx'
 import Calendar from './pages/Calendar.jsx'
 import Apartments from './pages/Apartments.jsx'
 import Bookings from './pages/Bookings.jsx'
+import Settings from './pages/Settings.jsx'
 
 export const navRoutes = [
   { path: '/', label: 'Home', element: <Home /> },
@@ -12,4 +13,5 @@ export const navRoutes = [
   { path: '/calendar', label: 'Calendar', element: <Calendar /> },
   { path: '/apartments', label: 'Apartments', element: <Apartments /> },
   { path: '/bookings', label: 'Bookings', element: <Bookings /> },
+  { path: '/settings', label: 'Settings', element: <Settings /> },
 ]

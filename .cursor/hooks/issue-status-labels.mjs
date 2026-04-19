@@ -118,6 +118,28 @@ function removeStatusLabels(repo, issue, except) {
   }
 }
 
+/** Task + description + summary (Cursor populates different fields per release). */
+function agentTextBlob(payload) {
+  return [payload.task, payload.description, payload.summary].map((x) => String(x || '')).join('\n')
+}
+
+/** Letters-only slug so "GithubClanker", "github_clanker", "GitHub Clanker" all match. */
+function typeLetters(typ) {
+  return String(typ || '')
+    .toLowerCase()
+    .replace(/[^a-z]/g, '')
+}
+
+function typeMentionsCodingClanker(typ) {
+  const L = typeLetters(typ)
+  return L.includes('coding') && L.includes('clanker')
+}
+
+function typeMentionsGithubClanker(typ) {
+  const L = typeLetters(typ)
+  return L.includes('github') && L.includes('clanker')
+}
+
 export function isCodingClankerSubagent(payload) {
   const typ = String(payload.subagent_type || '')
   if (
@@ -127,9 +149,11 @@ export function isCodingClankerSubagent(payload) {
     typ === 'builder_agent'
   )
     return true
-  const task = String(payload.task || '')
-  if (/\bcoding-clanker\b/i.test(task)) return true
-  if (/\bbuilder-agent\b/i.test(task)) return true
+  if (typeMentionsCodingClanker(typ)) return true
+  const blob = agentTextBlob(payload)
+  if (/\bcoding-clanker\b/i.test(blob) || /\bcoding_clanker\b/i.test(blob)) return true
+  if (/\bbuilder-agent\b/i.test(blob) || /\bbuilder_agent\b/i.test(blob)) return true
+  if (/\/implement-plan\b/i.test(blob) || /\/plan-from-issue\b/i.test(blob)) return true
   const desc = String(payload.description || '')
   if (/coding/i.test(desc) && /clanker/i.test(desc) && /approved plan/i.test(desc)) return true
   if (/builder/i.test(desc) && /approved plan/i.test(desc)) return true
@@ -148,8 +172,11 @@ export function validateCodingClankerIssueContext(payload) {
 export function isGithubClankerSubagent(payload) {
   const typ = String(payload.subagent_type || '')
   if (typ === 'github-clanker' || typ === 'github_clanker') return true
-  const task = String(payload.task || '')
-  if (/\bgithub-clanker\b/i.test(task)) return true
+  if (typeMentionsGithubClanker(typ)) return true
+  const blob = agentTextBlob(payload)
+  if (/\bgithub-clanker\b/i.test(blob) || /\bgithub_clanker\b/i.test(blob)) return true
+  if (/\/github-publish\b/i.test(blob) || /\bgithub-publish\b/i.test(blob)) return true
+  if (/github[-\s]publish/i.test(blob)) return true
   const desc = String(payload.description || '')
   if (/github/i.test(desc) && /clanker/i.test(desc) && /publish/i.test(desc)) return true
   return false
@@ -185,9 +212,9 @@ export function applyCodingClankerStartLabel(payload) {
 export function applyCodingClankerStopLabel(payload) {
   if (!isCodingClankerSubagent(payload)) return { ok: true, skipped: true }
   if (payload.status !== 'completed') return { ok: true, skipped: true }
-  const issue = extractIssueNumber(payload.task, payload.summary)
+  const issue = extractIssueNumber(payload.task, payload.summary, payload.description)
   if (!issue) {
-    log('skip in-review: no #issue in task/summary')
+    log('skip in-review: no #issue in task/summary/description')
     return { ok: false, reason: 'missing_issue' }
   }
   const repo = getRepoSlug()

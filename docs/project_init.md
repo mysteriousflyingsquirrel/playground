@@ -16,7 +16,37 @@ Setup and maintenance checklist for this repository (stack, CI, hygiene, and Cur
 - [ ] Rules under `.cursor/rules/` match team policy; see [cursor-operating-model-architecture.md](cursor-operating-model-architecture.md).
 - [ ] Skills under `.cursor/skills/<name>/SKILL.md` stay in sync with workflow changes.
 - [ ] Subagents under `.cursor/agents/*.md` reflect roles you actually delegate.
-- [ ] `.cursor/hooks.json` and the remaining `.cursor/hooks/*.mjs` stay safe on all OSes (Node-based hooks here); trusted workspace required for hooks to run.
+- [ ] `.cursor/hooks.json` and the remaining `.cursor/hooks/*.mjs` stay safe on all OSes (Node-based hooks here); trusted workspace required for hooks to run (see **Cursor hooks reliability** below).
+
+### Cursor hooks reliability (issue labels)
+
+Project hooks ([`.cursor/hooks.json`](../.cursor/hooks.json)) update GitHub `status:*` labels via **`subagentStart`** and **`subagentStop`** when **Task → coding-clanker** (or **github-clanker**) runs. If Cursor never executes those hooks, `gh issue edit` is never called from automation, regardless of terminal `gh` health. Official product behavior: [Cursor Hooks](https://cursor.com/docs/hooks) (project hooks, troubleshooting).
+
+**Trust and workspace**
+
+- [ ] Mark this repository folder as a **trusted workspace** (Command Palette → **Manage Workspace Trust**). Project hooks run only in trusted workspaces.
+- [ ] Open **this repo** as the workspace root that contains `.cursor/hooks.json` (single-folder workspace, or a multi-root workspace where this folder is a root). Reopen the window after changing trust if hooks still do not run.
+
+**Agent entrypoint**
+
+- [ ] Trigger label hooks from **Agent Chat or Cmd+K** using the **Task** tool to delegate **coding-clanker** (for example **`/implement-plan #n`** or the plan **Build** step when it routes to coding-clanker). Include **`#<n>`** in the delegated task text so [`subagent-start-review-gate.mjs`](../.cursor/hooks/subagent-start-review-gate.mjs) can resolve the issue. Tab hooks are separate from these Agent lifecycle hooks.
+
+**Verify in Cursor**
+
+- [ ] Use **Cursor Settings → Hooks** to inspect configured hooks and whether **`subagentStart`** / **`subagentStop`** executed; open the **Hooks** output channel for errors (timeouts, JSON, missing **`node`**).
+- [ ] Cursor watches `hooks.json` and reloads on save; if hooks are still absent, **restart Cursor**.
+
+**Smoke test (labels)**
+
+- [ ] Ensure the five `status:*` labels exist on GitHub (section below).
+- [ ] Start **Task → coding-clanker** with **`#n`** in the task → confirm **`subagentStart`** in Hooks output and **`status:in-progress`** on the issue.
+- [ ] Let the subagent finish **successfully** → confirm **`subagentStop`** ran and the issue shows **`status:in-review`** (or read any follow-up message if `gh issue edit` failed).
+
+**If hooks still never run**
+
+- **Remote / SSH:** Hooks receive `CURSOR_CODE_REMOTE` when applicable; confirm whether hooks run in your remote workspace (product behavior).
+- **`node` on PATH:** Commands use `node .cursor/hooks/*.mjs`. If the Hooks channel shows spawn errors, fix PATH for Cursor’s environment or switch `hooks.json` to an absolute path to `node` after you confirm the path locally.
+- **Timeouts:** [`hooks.json`](../.cursor/hooks.json) sets **`subagentStart`** timeout **8** (seconds). Slow `gh` or network can hit it; increase only if the Hooks output shows a timeout.
 
 ### GitHub issue status labels (automated workflow)
 
@@ -86,6 +116,7 @@ Only one `status:*` label should exist at a time. Hooks move issues from `todo` 
 
 - Operating model: always-on Build delegation rule, `/build-and-run` steers to Cursor Browser, merged **`/review`** + **`review-clanker`**, and github-clanker hook sets **`status:ready-to-merge`** after publish.
 - Issue status labels: added **`status:ready-to-merge`** after **`github-clanker`**; hardened hook **`gh`** invocation (Windows `gh.exe` resolution, git top-level `cwd`, richer failure logs).
+- Documented **Cursor hooks reliability (Option A)**: trusted workspace, workspace root, Agent + Task path, Hooks settings UI and output channel, smoke test, and edge cases (`CURSOR_CODE_REMOTE`, `node` PATH, hook timeouts).
 
 ### 2026-04-18
 
