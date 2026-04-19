@@ -488,3 +488,63 @@ body {
   background: var(--accent);
   transform: scale(1.15);
 }
+
+/* Bookings table (Issue #28) */
+.bookings-page {
+  max-width: 72rem;
+}
+
+.bookings-table-wrap {
+  overflow-x: auto;
+  margin: 0 -0.25rem;
+  padding: 0 0.25rem;
+}
+
+.bookings-table {
+  width: 100%;
+  min-width: 36rem;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.bookings-table thead {
+  background: rgba(110, 181, 255, 0.1);
+}
+
+.bookings-table th,
+.bookings-table td {
+  padding: 0.65rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.bookings-table th {
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.bookings-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.bookings-table td {
+  color: var(--text);
+}
+
+.bookings-table td:nth-child(4) {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.bookings-table td:last-child {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
