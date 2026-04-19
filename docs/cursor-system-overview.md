@@ -21,7 +21,7 @@ Use it to understand how the repo maps Cursor product concepts to local files. T
 
 ## Repo operating model at a glance
 
-Issue outside Cursor → `/plan-from-issue #n` → Build button → `/build-and-run [app]` → `/review` → `/github-publish #n` → Dev → Human integration test → Main
+Issue outside Cursor → `/plan-from-issue #n` → Build button → `/build-and-run [app]` → `/review` → `/github-publish #n` → Dev (merge on GitHub) → `/sync-dev` → Human integration test → Main
 
 - **Issue** starts as `status:todo`
 - **Build** should route through `coding-clanker`; the repo can steer this, but Cursor does not expose a hard repo-local Build-button binding
@@ -29,6 +29,7 @@ Issue outside Cursor → `/plan-from-issue #n` → Build button → `/build-and-
 - **`/review`** delegates `review-clanker` (code + UI; **`UI: N/A`** when no UI files changed)
 - **`/github-publish`** delegates `github-clanker`
 - **Dev** merge to `dev` sets `status:done`, closes the issue, and deletes the merged same-repo branch
+- **`/sync-dev`** updates the local clone to **`dev`** after that merge (fetch, checkout `dev`, pull `origin dev`)
 - **Human integration test** happens after merge to `dev`
 - **Main** promotion is human-only
 

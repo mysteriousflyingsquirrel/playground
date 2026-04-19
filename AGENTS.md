@@ -1,6 +1,6 @@
 # Project Instructions
 
-Operating flow: **Issue on GitHub → `/plan-from-issue #n` → Plan Build button → `coding-clanker` → `/build-and-run [app]` → `/review` → `/github-publish #n` → merge to `dev` → human integration test → merge to `main`.** The canonical workflow contract lives here. Wiring and enforcement details live in [docs/cursor-operating-model-architecture.md](docs/cursor-operating-model-architecture.md). Command examples live in [docs/operating-model-tutorial.md](docs/operating-model-tutorial.md). Official Cursor product references are indexed in [docs/cursor_sources.md](docs/cursor_sources.md).
+Operating flow: **Issue on GitHub → `/plan-from-issue #n` → Plan Build button → `coding-clanker` → `/build-and-run [app]` → `/review` → `/github-publish #n` → merge to `dev` → `/sync-dev` → human integration test → merge to `main`.** The canonical workflow contract lives here. Wiring and enforcement details live in [docs/cursor-operating-model-architecture.md](docs/cursor-operating-model-architecture.md). Command examples live in [docs/operating-model-tutorial.md](docs/operating-model-tutorial.md). Official Cursor product references are indexed in [docs/cursor_sources.md](docs/cursor_sources.md).
 
 ## Source-aligned principles
 
@@ -71,7 +71,7 @@ Closes #n
 4. **Human feature review/test** — Run **`/build-and-run`** (or **`/build-and-run appname`** in a multi-app repo). That command installs dependencies if needed, runs **`npm run build`**, starts the app locally, and opens the app URL with Cursor’s **Browser** tool (in-IDE), not the OS default browser. If feedback requires implementation changes, use the accepted plan’s **Build** step again.
 5. **Manual review** — Run **`/review`**. This delegates **`review-clanker`** (combined code and UI report). If the result contains **`[[BLOCKING]]`**, go back to **Build**, then re-run **`/build-and-run`** and **`/review`**.
 6. **GitHub publish** — Run **`/github-publish #42`** only after local review is ready. This delegates **`github-clanker`** to commit the current feature branch, push only that branch, and create or update one PR into **`dev`**.
-7. **Dev** — **Human** merges the PR into **`dev`** on GitHub. On merge, automation sets issue **`status:done`**, closes linked issues, and deletes the merged feature branch (same-repo branches only).
+7. **Dev** — **Human** merges the PR into **`dev`** on GitHub. On merge, automation sets issue **`status:done`**, closes linked issues, and deletes the merged feature branch (same-repo branches only). Run **`/sync-dev`** so this clone checks out **`dev`** and matches **`origin/dev`** before the next feature.
 8. **Human integration test** — Validate acceptance criteria on **`dev`** (deployed, preview, or local checkout). If this fails after merge, open a follow-up issue or reopen the original issue.
 9. **Main** — **Human** promotes **`dev` → `main`** only. Issue state does not change here.
 

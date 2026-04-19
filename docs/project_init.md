@@ -65,7 +65,7 @@ Only one `status:*` label should exist at a time. Hooks move issues from `todo` 
 |------|--------|
 | Agent instructions | [AGENTS.md](../AGENTS.md) |
 | Project rules | `.cursor/rules/operating-model-build.mdc`, `.cursor/rules/ui-system.mdc`, `.cursor/rules/architecture.mdc`, `.cursor/rules/git-workflow.mdc` |
-| Skills | `.cursor/skills/plan-from-issue/`, `build-and-run/`, `review/`, `github-publish/` (each contains `SKILL.md`) |
+| Skills | `.cursor/skills/plan-from-issue/`, `build-and-run/`, `review/`, `github-publish/`, `sync-dev/` (each contains `SKILL.md`) |
 | Subagents | `.cursor/agents/coding-clanker.md`, `review-clanker.md`, `github-clanker.md` |
 | Hooks | `.cursor/hooks.json`, `shell-policy.mjs`, `subagent-start-review-gate.mjs`, `subagent-stop-review-loop.mjs`, `issue-status-labels.mjs` |
 | Architecture map | [docs/cursor-operating-model-architecture.md](cursor-operating-model-architecture.md) |
@@ -75,7 +75,7 @@ Only one `status:*` label should exist at a time. Hooks move issues from `todo` 
 ### Notes
 
 - No `lint`, `typecheck`, or `test` script is installed yet.
-- The visible human workflow is: GitHub issue outside Cursor, `/plan-from-issue #n`, the accepted plan’s Build button, `/build-and-run`, `/review`, and `/github-publish #n`.
+- The visible human workflow is: GitHub issue outside Cursor, `/plan-from-issue #n`, the accepted plan’s Build button, `/build-and-run`, `/review`, `/github-publish #n`, then merge on GitHub and `/sync-dev` locally.
 - `coding-clanker` owns implementation, `review-clanker` is report-only, and `github-clanker` owns commit, push, and PR publication. If cloud execution is introduced later, document auth, secrets, network, and testability prerequisites before relying on it.
 
 ## Change Log

@@ -70,13 +70,31 @@ Expected post-merge automation:
 - issue closes
 - merged same-repo feature branch is deleted
 
-## 8. Human integration test
+## 8. Sync local `dev` (after merge)
+
+In Cursor, run:
+
+```text
+/sync-dev
+```
+
+That follows [.cursor/skills/sync-dev/SKILL.md](../.cursor/skills/sync-dev/SKILL.md): fetch, check out **`dev`**, and pull latest so your workspace matches GitHub before the next issue.
+
+Shell equivalent:
+
+```bash
+git fetch origin
+git checkout dev
+git pull origin dev
+```
+
+## 9. Human integration test
 
 Validate behavior on `dev` after merge.
 
 If integration fails after merge, open a follow-up issue or reopen the original issue.
 
-## 9. Main
+## 10. Main
 
 Merge `dev` to `main` in GitHub as a human-only step.
 

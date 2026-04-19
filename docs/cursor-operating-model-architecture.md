@@ -15,7 +15,7 @@ Official Cursor docs used for this repo:
 Repo decisions derived from those docs:
 
 - Use **Plan Mode** for complex work and save accepted plans into the workspace.
-- Keep the human-visible surface minimal: GitHub issue, **`/plan-from-issue #n`**, the accepted plan’s **Build** button, **`/build-and-run`**, **`/review`**, and **`/github-publish #n`**.
+- Keep the human-visible surface minimal: GitHub issue, **`/plan-from-issue #n`**, the accepted plan’s **Build** button, **`/build-and-run`**, **`/review`**, **`/github-publish #n`**, and **`/sync-dev`** after merge to **`dev`** on GitHub.
 - Use **subagents** only where context isolation is clearly worth it: `coding-clanker`, `review-clanker`, and `github-clanker`.
 - Keep **hooks** minimal: Git safety plus coding-clanker and github-clanker issue label automation.
 - Treat automation as **local-first**. If cloud execution is introduced later, document auth, secrets, network, and testability prerequisites first.
@@ -52,7 +52,8 @@ flowchart LR
   run --> rev["/review"]
   rev --> publish["/github-publish #n"]
   publish --> dev[MergeToDev]
-  dev --> integration[HumanIntegrationTest]
+  dev --> sync["/sync-dev"]
+  sync --> integration[HumanIntegrationTest]
   integration --> main[PromoteToMain]
 
   rev -->|"[[BLOCKING]]"| build
@@ -103,7 +104,7 @@ Enforcement stance:
 | Workflow contract | [AGENTS.md](../AGENTS.md) |
 | Git/PR rule | [.cursor/rules/git-workflow.mdc](../.cursor/rules/git-workflow.mdc) |
 | Architecture/UI rules | [.cursor/rules/architecture.mdc](../.cursor/rules/architecture.mdc), [.cursor/rules/ui-system.mdc](../.cursor/rules/ui-system.mdc) |
-| Visible skills | [.cursor/skills/plan-from-issue/SKILL.md](../.cursor/skills/plan-from-issue/SKILL.md), [.cursor/skills/build-and-run/SKILL.md](../.cursor/skills/build-and-run/SKILL.md), [.cursor/skills/review/SKILL.md](../.cursor/skills/review/SKILL.md), [.cursor/skills/github-publish/SKILL.md](../.cursor/skills/github-publish/SKILL.md) |
+| Visible skills | [.cursor/skills/plan-from-issue/SKILL.md](../.cursor/skills/plan-from-issue/SKILL.md), [.cursor/skills/build-and-run/SKILL.md](../.cursor/skills/build-and-run/SKILL.md), [.cursor/skills/review/SKILL.md](../.cursor/skills/review/SKILL.md), [.cursor/skills/github-publish/SKILL.md](../.cursor/skills/github-publish/SKILL.md), [.cursor/skills/sync-dev/SKILL.md](../.cursor/skills/sync-dev/SKILL.md) |
 | Subagents | [.cursor/agents/*.md](../.cursor/agents/) |
 | Local hooks | [.cursor/hooks/*.mjs](../.cursor/hooks/) + [.cursor/hooks.json](../.cursor/hooks.json) |
 | Merge-to-`dev` automation | [.github/workflows/issue-status-on-pr-merge.yml](../.github/workflows/issue-status-on-pr-merge.yml), [.github/workflows/delete-feature-branch-on-merge.yml](../.github/workflows/delete-feature-branch-on-merge.yml) |

@@ -14,7 +14,7 @@ alwaysApply: false
 
 ## Human command surface
 
-- The intended human workflow is: issue outside Cursor, **`/plan-from-issue #n`**, the accepted plan’s **Build** button, **`/build-and-run [app]`**, **`/review`**, and **`/github-publish #n`**.
+- The intended human workflow is: issue outside Cursor, **`/plan-from-issue #n`**, the accepted plan’s **Build** button, **`/build-and-run [app]`**, **`/review`**, and **`/github-publish #n`**. After the PR is merged into **`dev`** on GitHub, run **`/sync-dev`** to fetch, check out local **`dev`**, and pull **`origin/dev`** before the next feature.
 - Cursor does **not** expose a repo-local way to hard-bind the Build button to a named subagent. This repo therefore steers Build toward **`coding-clanker`** with rules, plan handoff wording, and subagent descriptions.
 
 ## No Git worktrees (hard rule)
