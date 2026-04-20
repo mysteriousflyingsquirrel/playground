@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { cn } from '../cn.js'
 
 const OPS = {
   '+': (a, b) => a + b,
@@ -12,6 +13,13 @@ function formatNumber(n) {
   const v = Number.parseFloat(Number(n).toPrecision(12))
   return String(v)
 }
+
+const btnBase =
+  'm-0 cursor-pointer rounded-lg border border-border bg-surface px-2 py-[0.65rem] font-inherit text-[1.05rem] font-medium text-fg transition-colors hover:border-accent-dim hover:bg-accent/8 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+
+const btnOp = 'text-accent bg-accent/10 hover:bg-accent/[0.18]'
+const btnEquals =
+  'border-accent-dim bg-accent/[0.22] font-semibold hover:bg-accent/[0.32] hover:text-fg'
 
 export default function Calculator() {
   const [display, setDisplay] = useState('0')
@@ -72,14 +80,11 @@ export default function Calculator() {
     setDisplay((prev) => (prev.includes('.') ? prev : prev + '.'))
   }, [error, overwrite, clearError])
 
-  const applyPending = useCallback(
-    (left, op, right) => {
-      const fn = OPS[op]
-      if (!fn) return left
-      return fn(left, right)
-    },
-    [],
-  )
+  const applyPending = useCallback((left, op, right) => {
+    const fn = OPS[op]
+    if (!fn) return left
+    return fn(left, right)
+  }, [])
 
   const commitOperator = useCallback(
     (nextOp) => {
@@ -156,96 +161,76 @@ export default function Calculator() {
   }, [error, clearError])
 
   return (
-    <div className="page">
-      <h1>Calculator</h1>
-      <p className="page-lead">
+    <div className="max-w-2xl">
+      <h1 className="mb-3 text-[1.75rem] font-semibold">Calculator</h1>
+      <p className="mb-6 text-[1.05rem] leading-normal text-muted [&_strong]:text-fg">
         Basic operations (+ − × ÷), <strong>CE</strong> clears the current entry,{' '}
         <strong>=</strong> completes the calculation.
       </p>
-      <section className="calculator" aria-label="Calculator">
-        <output className="calculator-display" htmlFor="calculator-keys" aria-live="polite">
+      <section className="mt-2 max-w-xs" aria-label="Calculator">
+        <output
+          className="mb-3 block min-h-12 w-full break-all rounded-lg border border-border bg-surface px-4 py-3 text-right text-2xl font-medium tabular-nums leading-snug text-fg"
+          htmlFor="calculator-keys"
+          aria-live="polite"
+        >
           {display}
         </output>
-        <div id="calculator-keys" className="calculator-keys">
-          <button type="button" className="calculator-btn" onClick={clearEntry}>
+        <div id="calculator-keys" className="grid grid-cols-4 gap-2">
+          <button type="button" className={btnBase} onClick={clearEntry}>
             CE
           </button>
-          <span className="calculator-btn-spacer" aria-hidden="true" />
-          <span className="calculator-btn-spacer" aria-hidden="true" />
-          <button
-            type="button"
-            className="calculator-btn calculator-btn--op"
-            onClick={() => commitOperator('/')}
-          >
+          <span className="invisible min-h-[2.75rem]" aria-hidden="true" />
+          <span className="invisible min-h-[2.75rem]" aria-hidden="true" />
+          <button type="button" className={cn(btnBase, btnOp)} onClick={() => commitOperator('/')}>
             ÷
           </button>
 
-          <button type="button" className="calculator-btn" onClick={() => inputDigit(7)}>
+          <button type="button" className={btnBase} onClick={() => inputDigit(7)}>
             7
           </button>
-          <button type="button" className="calculator-btn" onClick={() => inputDigit(8)}>
+          <button type="button" className={btnBase} onClick={() => inputDigit(8)}>
             8
           </button>
-          <button type="button" className="calculator-btn" onClick={() => inputDigit(9)}>
+          <button type="button" className={btnBase} onClick={() => inputDigit(9)}>
             9
           </button>
-          <button
-            type="button"
-            className="calculator-btn calculator-btn--op"
-            onClick={() => commitOperator('*')}
-          >
+          <button type="button" className={cn(btnBase, btnOp)} onClick={() => commitOperator('*')}>
             ×
           </button>
 
-          <button type="button" className="calculator-btn" onClick={() => inputDigit(4)}>
+          <button type="button" className={btnBase} onClick={() => inputDigit(4)}>
             4
           </button>
-          <button type="button" className="calculator-btn" onClick={() => inputDigit(5)}>
+          <button type="button" className={btnBase} onClick={() => inputDigit(5)}>
             5
           </button>
-          <button type="button" className="calculator-btn" onClick={() => inputDigit(6)}>
+          <button type="button" className={btnBase} onClick={() => inputDigit(6)}>
             6
           </button>
-          <button
-            type="button"
-            className="calculator-btn calculator-btn--op"
-            onClick={() => commitOperator('-')}
-          >
+          <button type="button" className={cn(btnBase, btnOp)} onClick={() => commitOperator('-')}>
             −
           </button>
 
-          <button type="button" className="calculator-btn" onClick={() => inputDigit(1)}>
+          <button type="button" className={btnBase} onClick={() => inputDigit(1)}>
             1
           </button>
-          <button type="button" className="calculator-btn" onClick={() => inputDigit(2)}>
+          <button type="button" className={btnBase} onClick={() => inputDigit(2)}>
             2
           </button>
-          <button type="button" className="calculator-btn" onClick={() => inputDigit(3)}>
+          <button type="button" className={btnBase} onClick={() => inputDigit(3)}>
             3
           </button>
-          <button
-            type="button"
-            className="calculator-btn calculator-btn--op"
-            onClick={() => commitOperator('+')}
-          >
+          <button type="button" className={cn(btnBase, btnOp)} onClick={() => commitOperator('+')}>
             +
           </button>
 
-          <button
-            type="button"
-            className="calculator-btn calculator-btn--wide"
-            onClick={() => inputDigit(0)}
-          >
+          <button type="button" className={cn(btnBase, 'col-span-2')} onClick={() => inputDigit(0)}>
             0
           </button>
-          <button type="button" className="calculator-btn" onClick={inputDot}>
+          <button type="button" className={btnBase} onClick={inputDot}>
             .
           </button>
-          <button
-            type="button"
-            className="calculator-btn calculator-btn--equals"
-            onClick={equals}
-          >
+          <button type="button" className={cn(btnBase, btnEquals)} onClick={equals}>
             =
           </button>
         </div>

@@ -85,7 +85,7 @@ Run:
 /review
 ```
 
-This delegates `**review-clanker**` (combined code and UI). When no **UI files** changed (paths matching the globs in [.cursor/rules/ui-system.mdc](../.cursor/rules/ui-system.mdc): `src/**/*.{js,jsx,ts,tsx,css}`, `apps/**/*.{js,jsx,ts,tsx,css}`, `packages/**/*.{js,jsx,ts,tsx,css}`), the report’s UI section is `**UI: N/A**`.
+This delegates `**review-clanker**` (combined code and UI). When no **UI files** changed (paths matching the globs in [.cursor/rules/ui-system.mdc](../.cursor/rules/ui-system.mdc): `src/**/*.{js,jsx,ts,tsx,css}`, `apps/**/*.{js,jsx,ts,tsx,css}`, `packages/**/*.{js,jsx,ts,tsx,css}`), the report’s UI section is `**UI: N/A`**.
 
 **Issue status:** unchanged (`**status:in-review`**); no label hook runs here.
 
@@ -149,7 +149,7 @@ Merge `dev` to `main` in GitHub as a human-only step.
 
 ## Rework loop
 
-If `**/review`** returns `**[[BLOCKING]]**`:
+If `**/review`** returns `**[[BLOCKING]]`**:
 
 1. Run `**/implement-plan #42**` again (same accepted plan / branch as appropriate).
 2. Re-run `**/build-and-run**`.

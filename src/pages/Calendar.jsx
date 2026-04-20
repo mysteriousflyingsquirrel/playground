@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { cn } from '../cn.js'
 
 const WEEKDAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 const MONTH_LABELS = [
@@ -66,6 +67,19 @@ function normalizeRange(start, end) {
   return start <= end ? { start, end } : { start: end, end: start }
 }
 
+const dayBtnBase =
+  'm-0 min-h-9 cursor-pointer rounded-md border font-inherit text-sm text-fg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent'
+
+function dayButtonClass(inRange, isEdge, isToday) {
+  return cn(
+    dayBtnBase,
+    !isEdge && inRange && 'border-border bg-accent/15 hover:border-accent-dim hover:bg-accent/10',
+    !isEdge && !inRange && 'border-border bg-bg hover:border-accent-dim hover:bg-accent/10',
+    isEdge && 'border-accent-dim bg-accent/35 font-semibold text-fg hover:bg-accent/40',
+    isToday && 'ring-1 ring-inset ring-accent',
+  )
+}
+
 function MonthGrid({
   year,
   month,
@@ -87,19 +101,28 @@ function MonthGrid({
   const selectedRange = normalizeRange(rangeStart, rangeEnd)
 
   return (
-    <section className="calendar-month" aria-label={monthTitle} onMouseLeave={onLeaveGrid}>
-      <h2 className="calendar-month-title">{monthTitle}</h2>
-      <div className="calendar-grid calendar-grid--weekdays" aria-hidden="true">
+    <section
+      className="min-w-[18rem] rounded-lg border border-border bg-surface p-[0.85rem]"
+      aria-label={monthTitle}
+      onMouseLeave={onLeaveGrid}
+    >
+      <h2 className="mb-2 text-base font-semibold">{monthTitle}</h2>
+      <div className="mb-[0.35rem] grid grid-cols-7 gap-[0.35rem]" aria-hidden="true">
         {WEEKDAY_LABELS.map((label) => (
-          <span key={label} className="calendar-weekday">
+          <span key={label} className="flex justify-center text-xs text-muted">
             {label}
           </span>
         ))}
       </div>
-      <div className="calendar-grid">
+      <div className="grid grid-cols-7 gap-[0.35rem]">
         {cells.map((date, index) => {
           if (!date) {
-            return <span key={`empty-${month}-${index}`} className="calendar-day calendar-day--disabled" />
+            return (
+              <span
+                key={`empty-${month}-${index}`}
+                className="pointer-events-none invisible min-h-9 rounded-md border border-transparent"
+              />
+            )
           }
 
           const activeRange = selectedRange ?? previewRange
@@ -108,20 +131,12 @@ function MonthGrid({
           const isEdge =
             (rangeStart && isSameDay(date, rangeStart)) || (rangeEnd && isSameDay(date, rangeEnd))
           const isToday = isSameDay(date, today)
-          const classNames = [
-            'calendar-day',
-            inRange ? 'calendar-day--in-range' : '',
-            isEdge ? 'calendar-day--edge' : '',
-            isToday ? 'calendar-day--today' : '',
-          ]
-            .filter(Boolean)
-            .join(' ')
 
           return (
             <button
               key={toDateInputValue(date)}
               type="button"
-              className={classNames}
+              className={dayButtonClass(inRange, isEdge, isToday)}
               onClick={() => onPickDate(date)}
               onMouseEnter={() => onHoverDate(date)}
               aria-pressed={isEdge}
@@ -181,38 +196,46 @@ export default function Calendar() {
   const monthLabel = (year, month) => `${MONTH_LABELS[month]} ${year}`
 
   return (
-    <div className="page">
-      <h1>Calendar</h1>
-      <p className="page-lead">
+    <div className="max-w-2xl">
+      <h1 className="mb-3 text-[1.75rem] font-semibold">Calendar</h1>
+      <p className="mb-6 text-[1.05rem] leading-normal text-muted [&_strong]:text-fg">
         Select a <strong>date range</strong> by clicking a start and end date.
       </p>
 
-      <label className="calendar-field-label" htmlFor="calendar-range">
+      <label className="mb-1.5 block text-sm text-muted" htmlFor="calendar-range">
         Selected range
       </label>
       <input
         id="calendar-range"
-        className="calendar-range-field"
+        className="mb-4 w-full max-w-[22rem] rounded-lg border border-border bg-surface px-3 py-2.5 font-inherit text-fg"
         type="text"
         readOnly
         placeholder="No dates selected"
         value={rangeText}
       />
 
-      <div className="calendar-nav">
-        <button type="button" className="calendar-nav-btn" onClick={() => shiftMonths(-1)}>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          className="m-0 cursor-pointer rounded-lg border border-border bg-surface px-2.5 py-1.5 font-inherit text-fg transition-colors hover:border-accent-dim hover:bg-accent/12 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          onClick={() => shiftMonths(-1)}
+        >
           Prev
         </button>
-        <div className="calendar-nav-label">
+        <div className="font-medium text-fg">
           {monthLabel(leftMonth.year, leftMonth.month)} /{' '}
           {monthLabel(rightMonth.year, rightMonth.month)}
         </div>
-        <button type="button" className="calendar-nav-btn" onClick={() => shiftMonths(1)}>
+        <button
+          type="button"
+          className="m-0 cursor-pointer rounded-lg border border-border bg-surface px-2.5 py-1.5 font-inherit text-fg transition-colors hover:border-accent-dim hover:bg-accent/12 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          onClick={() => shiftMonths(1)}
+        >
           Next
         </button>
       </div>
 
-      <div className="calendar-months">
+      <div className="flex flex-wrap gap-4">
         <MonthGrid
           year={leftMonth.year}
           month={leftMonth.month}

@@ -8,6 +8,7 @@ alwaysApply: false
 ## Stack
 
 - Vite, React, React Router ([package.json](@package.json)).
+- **Tailwind CSS v4** via `@tailwindcss/vite` ([vite.config.js](@vite.config.js)); design tokens and `@import "tailwindcss"` live in [src/index.css](@src/index.css).
 
 ## Layout
 
@@ -18,17 +19,19 @@ alwaysApply: false
 
 ## Conventions
 
-- Prefer functional components and existing JSX/CSS patterns in `src/`.
+- Prefer functional components and **Tailwind utility classes** for layout and styling in `src/`.
+- Use [src/cn.js](@src/cn.js) (`clsx` + `tailwind-merge`) when combining conditional utilities (for example active nav links or calendar day states).
 - Keep new routes and labels consistent with current `navRoutes` entries.
 - Do not introduce new top-level folders without a clear need; stay aligned with this small SPA structure.
+- Avoid large bespoke CSS in `index.css` unless extending `@theme` or base layers; prefer utilities in components.
 
 ## UI entrypoints (playground SPA)
 
 Concrete references for [ui-system.mdc](@.cursor/rules/ui-system.mdc) in this repo:
 
-- **App shell and navigation:** [src/App.jsx](@src/App.jsx) — sidebar, main content area, `<Routes>` from `navRoutes`.
-- **Global styles:** [src/index.css](@src/index.css) — spacing, typography, utility classes.
-- **Reference pages:** [src/pages/Home.jsx](@src/pages/Home.jsx), [src/pages/Info.jsx](@src/pages/Info.jsx) — `page`, `page-lead`, `info-section`, and similar layout/class patterns.
+- **App shell and navigation:** [src/App.jsx](@src/App.jsx) — sidebar, main content area, `<Routes>` from `navRoutes` (Tailwind utilities + `NavLink` active states via `cn()`).
+- **Global styles:** [src/index.css](@src/index.css) — `@import "tailwindcss"`, `@theme` color and font tokens, minimal `@layer base`.
+- **Reference pages:** [src/pages/Home.jsx](@src/pages/Home.jsx), [src/pages/Info.jsx](@src/pages/Info.jsx) — max-width content column, lead paragraph, and section/list patterns expressed as utilities.
 
 ## Cross-cutting policy
 

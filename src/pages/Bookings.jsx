@@ -60,36 +60,55 @@ const bookings = [
   nights: nightsBetween(row.checkIn, row.checkOut),
 }))
 
+const cell = 'border-b border-border px-3.5 py-2.5 text-left align-top text-[0.9375rem] text-fg'
+const thCell =
+  'border-b border-border bg-accent/10 px-3.5 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-muted'
+
 export default function Bookings() {
   return (
-    <div className="page bookings-page">
-      <h1>Bookings</h1>
-      <p className="page-lead">
-        Example reservations with stay length counted as <strong>nights</strong> (each night is the period
-        between check-in day and the morning of the following day; the check-out date is the departure
-        morning).
+    <div className="max-w-6xl">
+      <h1 className="mb-3 text-[1.75rem] font-semibold">Bookings</h1>
+      <p className="mb-6 text-[1.05rem] leading-normal text-muted [&_strong]:text-fg">
+        Example reservations with stay length counted as <strong>nights</strong> (each night is
+        the period between check-in day and the morning of the following day; the check-out date is
+        the departure morning).
       </p>
-      <div className="bookings-table-wrap">
-        <table className="bookings-table">
+      <div className="-mx-1 overflow-x-auto px-1">
+        <table className="min-w-[36rem] w-full border-collapse overflow-hidden rounded-[10px] border border-border bg-surface text-[0.9375rem]">
           <thead>
             <tr>
-              <th scope="col">Guest name</th>
-              <th scope="col">Date range</th>
-              <th scope="col">Apartment</th>
-              <th scope="col">Nights</th>
-              <th scope="col">Price</th>
+              <th scope="col" className={thCell}>
+                Guest name
+              </th>
+              <th scope="col" className={thCell}>
+                Date range
+              </th>
+              <th scope="col" className={thCell}>
+                Apartment
+              </th>
+              <th scope="col" className={`${thCell} whitespace-nowrap tabular-nums`}>
+                Nights
+              </th>
+              <th scope="col" className={`${thCell} whitespace-nowrap tabular-nums`}>
+                Price
+              </th>
             </tr>
           </thead>
           <tbody>
-            {bookings.map((b) => (
-              <tr key={`${b.guestName}-${b.checkIn.toISOString()}`}>
-                <td>{b.guestName}</td>
-                <td>{formatDateRange(b.checkIn, b.checkOut)}</td>
-                <td>{b.apartmentName}</td>
-                <td>{b.nights}</td>
-                <td>{currency.format(b.priceUsd)}</td>
-              </tr>
-            ))}
+            {bookings.map((b, i) => {
+              const last = i === bookings.length - 1
+              const c = last ? `${cell} border-b-0` : cell
+              const num = last ? `${cell} border-b-0 whitespace-nowrap tabular-nums` : `${cell} whitespace-nowrap tabular-nums`
+              return (
+                <tr key={`${b.guestName}-${b.checkIn.toISOString()}`}>
+                  <td className={c}>{b.guestName}</td>
+                  <td className={c}>{formatDateRange(b.checkIn, b.checkOut)}</td>
+                  <td className={c}>{b.apartmentName}</td>
+                  <td className={num}>{b.nights}</td>
+                  <td className={num}>{currency.format(b.priceUsd)}</td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

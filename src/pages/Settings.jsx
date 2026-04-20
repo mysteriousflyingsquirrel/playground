@@ -1,5 +1,11 @@
 import { useState } from 'react'
 
+const fieldLabel = 'mb-1.5 block text-sm text-muted'
+const inputLike =
+  'w-full max-w-[22rem] rounded-lg border border-border bg-surface px-3 py-2.5 font-inherit text-fg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+const checkLabel =
+  'inline-flex cursor-pointer items-center gap-2 text-[0.9375rem] text-fg'
+
 export default function Settings() {
   const [emailNotifications, setEmailNotifications] = useState(true)
   const [compactUi, setCompactUi] = useState(false)
@@ -13,17 +19,17 @@ export default function Settings() {
   const [itemsPerPage, setItemsPerPage] = useState('25')
 
   return (
-    <div className="page">
-      <h1>Settings</h1>
-      <p className="page-lead">
-        Example preferences for this playground app. Values stay in memory only
-        until you refresh the page.
+    <div className="max-w-2xl">
+      <h1 className="mb-3 text-[1.75rem] font-semibold">Settings</h1>
+      <p className="mb-6 text-[1.05rem] leading-normal text-muted [&_strong]:text-fg">
+        Example preferences for this playground app. Values stay in memory only until you refresh
+        the page.
       </p>
 
-      <section className="info-section">
-        <h2>Notifications & UI</h2>
-        <div className="settings-row">
-          <label className="settings-label" htmlFor="settings-email-notify">
+      <section className="mb-7">
+        <h2 className="mb-2 text-base font-semibold text-fg">Notifications & UI</h2>
+        <div className="mb-4">
+          <label className={checkLabel} htmlFor="settings-email-notify">
             <input
               id="settings-email-notify"
               type="checkbox"
@@ -33,8 +39,8 @@ export default function Settings() {
             Email notifications
           </label>
         </div>
-        <div className="settings-row">
-          <label className="settings-label" htmlFor="settings-compact">
+        <div className="mb-4">
+          <label className={checkLabel} htmlFor="settings-compact">
             <input
               id="settings-compact"
               type="checkbox"
@@ -44,8 +50,8 @@ export default function Settings() {
             Compact UI
           </label>
         </div>
-        <div className="settings-row">
-          <label className="settings-label" htmlFor="settings-tooltips">
+        <div className="mb-4">
+          <label className={checkLabel} htmlFor="settings-tooltips">
             <input
               id="settings-tooltips"
               type="checkbox"
@@ -55,13 +61,13 @@ export default function Settings() {
             Show tooltips
           </label>
         </div>
-        <div className="settings-row">
-          <label className="settings-field-label" htmlFor="settings-density">
+        <div className="mb-0">
+          <label className={fieldLabel} htmlFor="settings-density">
             Theme density
           </label>
           <select
             id="settings-density"
-            className="settings-select"
+            className={inputLike}
             value={themeDensity}
             onChange={(e) => setThemeDensity(e.target.value)}
           >
@@ -72,15 +78,15 @@ export default function Settings() {
         </div>
       </section>
 
-      <section className="info-section">
-        <h2>Calendar</h2>
-        <div className="settings-row">
-          <label className="settings-field-label" htmlFor="settings-cal-view">
+      <section className="mb-7">
+        <h2 className="mb-2 text-base font-semibold text-fg">Calendar</h2>
+        <div className="mb-4">
+          <label className={fieldLabel} htmlFor="settings-cal-view">
             Default calendar view
           </label>
           <select
             id="settings-cal-view"
-            className="settings-select"
+            className={inputLike}
             value={calendarView}
             onChange={(e) => setCalendarView(e.target.value)}
           >
@@ -89,10 +95,10 @@ export default function Settings() {
             <option value="agenda">Agenda</option>
           </select>
         </div>
-        <fieldset className="settings-fieldset">
-          <legend className="settings-legend">Week starts on</legend>
-          <div className="settings-radio-group">
-            <label className="settings-label" htmlFor="settings-week-sun">
+        <fieldset className="m-0 mt-4 border-none p-0">
+          <legend className="mb-2 text-sm font-semibold text-muted">Week starts on</legend>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <label className={checkLabel} htmlFor="settings-week-sun">
               <input
                 id="settings-week-sun"
                 type="radio"
@@ -103,7 +109,7 @@ export default function Settings() {
               />
               Sunday
             </label>
-            <label className="settings-label" htmlFor="settings-week-mon">
+            <label className={checkLabel} htmlFor="settings-week-mon">
               <input
                 id="settings-week-mon"
                 type="radio"
@@ -118,42 +124,42 @@ export default function Settings() {
         </fieldset>
       </section>
 
-      <section className="info-section">
-        <h2>Profile & workspace</h2>
-        <div className="settings-row">
-          <label className="settings-field-label" htmlFor="settings-display-name">
+      <section className="mb-7">
+        <h2 className="mb-2 text-base font-semibold text-fg">Profile & workspace</h2>
+        <div className="mb-4">
+          <label className={fieldLabel} htmlFor="settings-display-name">
             Display name
           </label>
           <input
             id="settings-display-name"
             type="text"
-            className="settings-input"
+            className={inputLike}
             autoComplete="name"
             placeholder="Your name"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
           />
         </div>
-        <div className="settings-row">
-          <label className="settings-field-label" htmlFor="settings-workspace">
+        <div className="mb-4">
+          <label className={fieldLabel} htmlFor="settings-workspace">
             Workspace label
           </label>
           <input
             id="settings-workspace"
             type="text"
-            className="settings-input"
+            className={inputLike}
             placeholder="e.g. Personal, Team East"
             value={workspaceLabel}
             onChange={(e) => setWorkspaceLabel(e.target.value)}
           />
         </div>
-        <div className="settings-row">
-          <label className="settings-field-label" htmlFor="settings-language">
+        <div className="mb-4">
+          <label className={fieldLabel} htmlFor="settings-language">
             Language
           </label>
           <select
             id="settings-language"
-            className="settings-select"
+            className={inputLike}
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
           >
@@ -162,14 +168,14 @@ export default function Settings() {
             <option value="es">Español</option>
           </select>
         </div>
-        <div className="settings-row">
-          <label className="settings-field-label" htmlFor="settings-items-page">
+        <div className="mb-0">
+          <label className={fieldLabel} htmlFor="settings-items-page">
             Items per page
           </label>
           <input
             id="settings-items-page"
             type="text"
-            className="settings-input"
+            className={inputLike}
             inputMode="numeric"
             placeholder="25"
             value={itemsPerPage}

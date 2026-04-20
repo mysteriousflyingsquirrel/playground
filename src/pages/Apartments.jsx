@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { cn } from '../cn.js'
 
 const apartments = [
   {
@@ -39,6 +40,12 @@ const apartments = [
   },
 ]
 
+const sliderBtn =
+  'm-0 cursor-pointer rounded-md border border-border bg-bg px-2.5 py-1.5 font-inherit text-sm text-fg transition-colors hover:border-accent-dim hover:bg-accent/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+
+const sliderIconBtn =
+  'inline-flex min-h-9 min-w-9 items-center justify-center p-1.5 text-lg font-semibold tabular-nums leading-none'
+
 function ImageSlider({ title, images }) {
   const [index, setIndex] = useState(0)
   const count = images.length
@@ -46,10 +53,10 @@ function ImageSlider({ title, images }) {
   const goNext = () => setIndex((i) => (i + 1) % count)
 
   return (
-    <div className="apartment-slider">
-      <div className="apartment-slider-frame">
+    <div className="border-b border-border">
+      <div className="relative aspect-[720/448] bg-bg">
         <img
-          className="apartment-slider-image"
+          className="block h-full w-full object-cover"
           src={images[index]}
           alt={`${title} — photo ${index + 1} of ${count}`}
           width={720}
@@ -57,16 +64,16 @@ function ImageSlider({ title, images }) {
           loading={index === 0 ? 'eager' : 'lazy'}
         />
       </div>
-      <div className="apartment-slider-toolbar">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-2.5 py-2">
         <button
           type="button"
-          className="apartment-slider-btn apartment-slider-btn--icon"
+          className={cn(sliderBtn, sliderIconBtn)}
           onClick={goPrev}
           aria-label="Previous photo"
         >
           {'<'}
         </button>
-        <div className="apartment-slider-dots" role="tablist" aria-label="Photos">
+        <div className="flex min-w-0 flex-1 items-center justify-center gap-1.5" role="tablist" aria-label="Photos">
           {images.map((_, i) => (
             <button
               key={i}
@@ -74,16 +81,18 @@ function ImageSlider({ title, images }) {
               role="tab"
               aria-selected={i === index}
               aria-label={`Show photo ${i + 1}`}
-              className={
-                'apartment-slider-dot' + (i === index ? ' apartment-slider-dot--active' : '')
-              }
+              className={cn(
+                'h-2 w-2 cursor-pointer rounded-full border-none p-0 transition-[background,transform] hover:bg-muted',
+                'bg-border focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+                i === index && 'scale-[1.15] bg-accent',
+              )}
               onClick={() => setIndex(i)}
             />
           ))}
         </div>
         <button
           type="button"
-          className="apartment-slider-btn apartment-slider-btn--icon"
+          className={cn(sliderBtn, sliderIconBtn)}
           onClick={goNext}
           aria-label="Next photo"
         >
@@ -96,19 +105,22 @@ function ImageSlider({ title, images }) {
 
 export default function Apartments() {
   return (
-    <div className="page apartments-page">
-      <h1>Example stays</h1>
-      <p className="page-lead">
+    <div className="max-w-6xl">
+      <h1 className="mb-3 text-[1.75rem] font-semibold">Example stays</h1>
+      <p className="mb-6 text-[1.05rem] leading-normal text-muted [&_strong]:text-fg">
         Three sample listings with short descriptions and photo carousels—similar to what a guest
         would see when browsing apartments.
       </p>
-      <div className="apartments-grid">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(17rem,1fr))] items-stretch gap-5">
         {apartments.map((apt) => (
-          <article key={apt.title} className="apartment-card">
+          <article
+            key={apt.title}
+            className="flex min-w-0 flex-col overflow-hidden rounded-[10px] border border-border bg-surface"
+          >
             <ImageSlider title={apt.title} images={apt.images} />
-            <div className="apartment-card-body">
-              <h2 className="apartment-card-title">{apt.title}</h2>
-              <p className="apartment-card-desc">{apt.description}</p>
+            <div className="flex flex-1 flex-col px-[1.1rem] pb-[1.15rem] pt-4">
+              <h2 className="mb-2 text-[1.05rem] font-semibold text-fg">{apt.title}</h2>
+              <p className="m-0 text-[0.9375rem] leading-[1.55] text-muted">{apt.description}</p>
             </div>
           </article>
         ))}

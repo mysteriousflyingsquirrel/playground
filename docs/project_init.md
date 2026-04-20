@@ -106,6 +106,7 @@ Only one `status:*` label should exist at a time. Hooks move issues from `todo` 
 
 ### Notes
 
+- Styling: **Tailwind CSS v4** with the official **Vite plugin** (`tailwindcss`, `@tailwindcss/vite` in [package.json](../package.json)); conditional classes use **`clsx`** + **`tailwind-merge`** via [src/cn.js](../src/cn.js).
 - No `lint`, `typecheck`, or `test` script is installed yet.
 - The visible human workflow is: GitHub issue (`/create-issue feature|bug|chore …` or the web UI), `/plan-from-issue #n`, the accepted plan’s Build button, `/build-and-run`, `/review`, `/github-publish #n`, then merge on GitHub and `/sync-dev` locally.
 - `coding-clanker` owns implementation, `review-clanker` is report-only, and `github-clanker` owns commit, push, and PR publication. If cloud execution is introduced later, document auth, secrets, network, and testability prerequisites before relying on it.

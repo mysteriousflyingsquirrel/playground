@@ -25,7 +25,7 @@ The human invokes you **manually** after local implementation and **`/build-and-
 
 ### UI (only when UI files changed)
 
-- When any UI file (globs above) changed: inspect JSX/CSS against [.cursor/rules/ui-system.mdc](@.cursor/rules/ui-system.mdc) and repo-specific anchors in [.cursor/rules/architecture.mdc](@.cursor/rules/architecture.mdc) (for this SPA: shell, `page` layout, `index.css`).
+- When any UI file (globs above) changed: inspect JSX/CSS against [.cursor/rules/ui-system.mdc](@.cursor/rules/ui-system.mdc) and repo-specific anchors in [.cursor/rules/architecture.mdc](@.cursor/rules/architecture.mdc) (for this SPA: Tailwind v4 utilities, app shell in `App.jsx`, `@theme` tokens in `index.css`).
 - Note spacing, typography, navigation consistency, and obvious responsive issues.
 - Call out anything that would confuse users or break visual consistency.
 
