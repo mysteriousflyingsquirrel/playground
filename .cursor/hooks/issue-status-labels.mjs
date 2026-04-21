@@ -118,9 +118,11 @@ function removeStatusLabels(repo, issue, except) {
   }
 }
 
-/** Task + description + summary (Cursor populates different fields per release). */
+/** Task + prompt + description + summary (Cursor populates different fields per release). */
 function agentTextBlob(payload) {
-  return [payload.task, payload.description, payload.summary].map((x) => String(x || '')).join('\n')
+  return [payload.task, payload.prompt, payload.description, payload.summary]
+    .map((x) => String(x || ''))
+    .join('\n')
 }
 
 /** Letters-only slug so "GithubClanker", "github_clanker", "GitHub Clanker" all match. */
@@ -162,7 +164,12 @@ export function isCodingClankerSubagent(payload) {
 
 export function validateCodingClankerIssueContext(payload) {
   if (!isCodingClankerSubagent(payload)) return { ok: true, issue: null, repo: null }
-  const issue = extractIssueNumber(payload.task, payload.description, payload.summary)
+  const issue = extractIssueNumber(
+    payload.task,
+    payload.prompt,
+    payload.description,
+    payload.summary
+  )
   if (!issue) return { ok: false, reason: 'missing_issue' }
   const repo = getRepoSlug()
   if (!repo) return { ok: false, reason: 'missing_repo', issue }
@@ -187,7 +194,12 @@ export function isGithubClankerSubagent(payload) {
  */
 export function applyCodingClankerStartLabel(payload) {
   if (!isCodingClankerSubagent(payload)) return { ok: true, skipped: true }
-  const issue = extractIssueNumber(payload.task, payload.description, payload.summary)
+  const issue = extractIssueNumber(
+    payload.task,
+    payload.prompt,
+    payload.description,
+    payload.summary
+  )
   if (!issue) {
     log('skip in-progress: no #issue in task')
     return { ok: false, reason: 'missing_issue' }
@@ -212,7 +224,12 @@ export function applyCodingClankerStartLabel(payload) {
 export function applyCodingClankerStopLabel(payload) {
   if (!isCodingClankerSubagent(payload)) return { ok: true, skipped: true }
   if (payload.status !== 'completed') return { ok: true, skipped: true }
-  const issue = extractIssueNumber(payload.task, payload.summary, payload.description)
+  const issue = extractIssueNumber(
+    payload.task,
+    payload.prompt,
+    payload.summary,
+    payload.description
+  )
   if (!issue) {
     log('skip in-review: no #issue in task/summary/description')
     return { ok: false, reason: 'missing_issue' }
@@ -237,7 +254,12 @@ export function applyCodingClankerStopLabel(payload) {
 export function applyGithubClankerStopLabel(payload) {
   if (!isGithubClankerSubagent(payload)) return { ok: true, skipped: true }
   if (payload.status !== 'completed') return { ok: true, skipped: true }
-  const issue = extractIssueNumber(payload.task, payload.summary, payload.description)
+  const issue = extractIssueNumber(
+    payload.task,
+    payload.prompt,
+    payload.summary,
+    payload.description
+  )
   if (!issue) {
     log('skip ready-to-merge: no #issue in task/summary/description')
     return { ok: false, reason: 'missing_issue' }

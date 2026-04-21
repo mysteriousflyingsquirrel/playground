@@ -20,11 +20,20 @@ try {
 }
 
 const type = payload.subagent_type || ''
-const task = String(payload.task || '').slice(0, 200)
-console.error(`[subagentStart] type=${type} task=${task}`)
+console.error(
+  `[subagentStart] type=${type} keys=${Object.keys(payload).join(',')} ` +
+    `task=${String(payload.task || '').slice(0, 120)} ` +
+    `prompt=${String(payload.prompt || '').slice(0, 120)} ` +
+    `desc=${String(payload.description || '').slice(0, 120)}`
+)
 
 if (isCodingClankerSubagent(payload)) {
-  const issue = extractIssueNumber(payload.task, payload.description)
+  const issue = extractIssueNumber(
+    payload.task,
+    payload.prompt,
+    payload.description,
+    payload.summary
+  )
   if (!issue) {
     process.stdout.write(
       JSON.stringify({
