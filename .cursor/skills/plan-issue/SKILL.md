@@ -32,7 +32,11 @@ When the planning work is completed for `/plan-issue #n`:
 3. **Technical approach** — files to touch, routes/components if UI, data flow if any.
 4. **Verification** — only commands from [package.json](@package.json) (e.g. `npm run build`).
 5. **Risks / open questions** — short list.
-6. **Build handoff** — a compact section that gives the Build button enough context:
+6. Update issue labels explicitly:
+  - Read current labels for issue `#n`.
+  - Remove the current `status:`* label if present (`status:todo`, `status:ready-to-review`, `status:ready-to-publish`, `status:blocked`, `status:ready-to-merge`, `status:done`).
+  - Add `status:ready-to-implement`.
+7. **Build handoff** — a compact section that gives the Build button enough context:
   - `Issue: #<n>`
   - `Suggested branch: feature/issue-<n>-short-slug`
   - `Build owner: coding-clanker`
