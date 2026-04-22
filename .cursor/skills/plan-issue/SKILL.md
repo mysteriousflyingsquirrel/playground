@@ -20,7 +20,7 @@ disable-model-invocation: true
 
 ## Label transition
 
-On successful completion of `/plan-issue #n`:
+When the planning work is completed for `/plan-issue #n`:
 
 - Remove the current `status:*` label if present.
 - Add `status:ready-to-implement`.
@@ -46,4 +46,4 @@ On successful completion of `/plan-issue #n`:
 - Issue template: [.github/ISSUE_TEMPLATE/feature-bug-chore.yml](@.github/ISSUE_TEMPLATE/feature-bug-chore.yml)
 - Architecture: [.cursor/rules/architecture.mdc](@.cursor/rules/architecture.mdc)
 
-After the plan is accepted, the human should click **Build** on the accepted plan, or run `**/implement-issue #n`** (see [.cursor/skills/implement-issue/SKILL.md](@.cursor/skills/implement-issue/SKILL.md)) so the handling agent delegates **Task → coding-clanker**. This repo steers the Build step toward **coding-clanker** (see [.cursor/agents/coding-clanker.md](@.cursor/agents/coding-clanker.md)), but that routing is best-effort, so the plan must carry the issue number and suggested branch naming clearly. `coding-clanker` owns implementation on the feature branch; `github-clanker` later handles commit, push, and PR publication once review is ready.
+After the plan is completed, the human should click **Build** on the completed plan, or run `**/implement-issue #n`** (see [.cursor/skills/implement-issue/SKILL.md](@.cursor/skills/implement-issue/SKILL.md)) so the handling agent delegates **Task → coding-clanker**. This repo steers the Build step toward **coding-clanker** (see [.cursor/agents/coding-clanker.md](@.cursor/agents/coding-clanker.md)), but that routing is best-effort, so the plan must carry the issue number and suggested branch naming clearly. `coding-clanker` owns implementation on the feature branch; `github-clanker` later handles commit, push, and PR publication once review is ready.
