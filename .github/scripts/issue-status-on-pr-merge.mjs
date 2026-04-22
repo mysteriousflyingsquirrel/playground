@@ -27,11 +27,22 @@ if (nums.length === 0) {
 
 const STATUS = {
   todo: 'status:todo',
-  done: 'status:done',
-  inProgress: 'status:in-progress',
-  inReview: 'status:in-review',
+  readyToImplement: 'status:ready-to-implement',
+  readyToReview: 'status:ready-to-review',
+  readyToPublish: 'status:ready-to-publish',
+  blocked: 'status:blocked',
   readyToMerge: 'status:ready-to-merge',
+  done: 'status:done',
 }
+
+const NON_DONE_STATUSES = [
+  STATUS.todo,
+  STATUS.readyToImplement,
+  STATUS.readyToReview,
+  STATUS.readyToPublish,
+  STATUS.blocked,
+  STATUS.readyToMerge,
+]
 
 function gh(args) {
   const r = spawnSync('gh', args, { encoding: 'utf8', shell: false })
@@ -43,10 +54,9 @@ function gh(args) {
 
 for (const n of nums) {
   gh(['issue', 'edit', String(n), '--add-label', STATUS.done])
-  gh(['issue', 'edit', String(n), '--remove-label', STATUS.todo])
-  gh(['issue', 'edit', String(n), '--remove-label', STATUS.inProgress])
-  gh(['issue', 'edit', String(n), '--remove-label', STATUS.inReview])
-  gh(['issue', 'edit', String(n), '--remove-label', STATUS.readyToMerge])
+  for (const label of NON_DONE_STATUSES) {
+    gh(['issue', 'edit', String(n), '--remove-label', label])
+  }
   gh(['issue', 'close', String(n)])
 }
 

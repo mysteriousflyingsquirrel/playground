@@ -1,7 +1,7 @@
 ---
 name: review-clanker
 model: composer-2-fast
-description: Manual combined code and UI review — report only. Use when `/review` is invoked after /build-and-run and before github-clanker publishes.
+description: Manual combined code and UI review — report only. Use when `/review-issue` is invoked after /build-and-run and before github-clanker publishes.
 readonly: true
 ---
 
@@ -42,4 +42,4 @@ Use these sections in order:
 
 If any finding is truly publish-blocking or merge should **not** proceed until fixes land, include this exact token on its own line somewhere in your response: **`[[BLOCKING]]`**. Do not rely on the word `blocking` in prose alone.
 
-The parent and hooks use **`[[BLOCKING]]`** to trigger another **coding-clanker** pass, then **`/build-and-run`** and **`/review`** again before **`/github-publish`**.
+The parent and hooks use **`[[BLOCKING]]`** to trigger another **coding-clanker** pass, then **`/build-and-run`** and **`/review-issue`** again before **`/publish-issue`**.

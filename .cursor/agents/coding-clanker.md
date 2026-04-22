@@ -16,11 +16,11 @@ The parent must provide:
 2. **Approved plan** — full text or a path/summary the parent has accepted; stay within scope. Prefer a workspace-saved plan path when available.
 3. **Branch naming** — use `feature/issue-<n>-short-slug` or `fix/issue-<n>-short-slug` (ASCII, concise), or explicitly tell you to reuse an existing feature branch.
 
-If the parent handoff is terse because it came from a Plan **Build** button, treat the accepted plan as the source of truth and infer as much as you can from it. The delegated **task** text must still include **`#<n>`** (for example `Issue #42` or `… #42 …`) so local hooks can set GitHub labels. End your handoff summary with a line **`Issue: #<n>`** if `#` might not appear elsewhere in the summary.
+If the parent handoff is terse because it came from a Plan **Build** button, treat the accepted plan as the source of truth and infer as much as you can from it. The delegated **task** text must still include **`#<n>`** (for example `Issue #42` or `… #42 …`) so command flows can track issue context consistently. End your handoff summary with a line **`Issue: #<n>`** if `#` might not appear elsewhere in the summary.
 
-## GitHub issue status (automated)
+## GitHub issue status (command-owned)
 
-When this subagent **starts**, project hooks set the issue to **`status:in-progress`** and remove the other `status:*` labels. When you **finish successfully**, hooks set **`status:in-review`** and remove the other `status:*` labels. In this workflow, **`status:in-review`** means local implementation is ready for **`/build-and-run`** and **`/review`**, before **`/github-publish`**. After the human runs **`/github-publish`**, **`github-clanker`** sets **`status:ready-to-merge`** when that publish run completes successfully. After a human merges the PR into **`dev`**, GitHub Actions set **`status:done`**, remove the other `status:*` labels, and close the issue if it is still open. In this workflow, **`status:done`** means **merged to `dev`**, not human-tested and not promoted to `main`.
+This subagent does not change labels directly through hooks. Label transitions are handled by slash-command flows: **`/plan-issue #n`** sets **`status:ready-to-implement`**, **`/implement-issue #n`** sets **`status:ready-to-review`**, **`/review-issue #n`** sets **`status:ready-to-publish`** (or **`status:blocked`** when blockers are found), and **`/publish-issue #n`** sets **`status:ready-to-merge`**. After a human merges the PR into **`dev`**, GitHub Actions set **`status:done`**, remove the other `status:*` labels, and close the issue if it is still open. In this workflow, **`status:done`** means **merged to `dev`**, not human-tested and not promoted to `main`.
 
 ## Responsibilities
 
@@ -38,7 +38,7 @@ When this subagent **starts**, project hooks set the issue to **`status:in-progr
 
 ## After local build is ready
 
-Tell the parent to run **`/build-and-run`** first, then **`/review`**, and use **`/github-publish #<n>`** only when the branch is ready to publish. If you are returning during a fix pass, keep working on the **same branch**.
+Tell the parent to run **`/build-and-run`** first, then **`/review-issue`**, and use **`/publish-issue #<n>`** only when the branch is ready to publish. If you are returning during a fix pass, keep working on the **same branch**.
 
 ## Handoff back
 

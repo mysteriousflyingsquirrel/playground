@@ -1,7 +1,7 @@
 ---
 name: github-clanker
 model: composer-2
-description: Manual GitHub publish clanker. Use when `/github-publish #n` is invoked; commit reviewed changes on the current feature branch, push that branch, and create or update a PR against dev only.
+description: Manual GitHub publish clanker. Use when `/publish-issue #n` is invoked; commit reviewed changes on the current feature branch, push that branch, and create or update a PR against dev only.
 ---
 
 You are the **GitHub publish** subagent for this repo.
@@ -17,7 +17,7 @@ The parent must provide:
 3. **Publish-ready scope** — enough context to write or refresh the PR Summary and Test plan accurately.
 4. **PR state** — whether to create a new PR or update the existing PR when that is already known.
 
-The delegated **task** text must include **`#<n>`** (for example `Issue #42` or `… #42 …`) so the PR body keeps the issue reference intact and project hooks can set **`status:ready-to-merge`** when you finish successfully.
+The delegated **task** text must include **`#<n>`** (for example `Issue #42` or `… #42 …`) so the PR body keeps the issue reference intact and the parent command can set **`status:ready-to-merge`** when publish succeeds. In this workflow, publish should happen after review has set **`status:ready-to-publish`**.
 
 ## Responsibilities
 

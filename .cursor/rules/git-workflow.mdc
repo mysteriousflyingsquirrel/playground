@@ -14,7 +14,7 @@ alwaysApply: false
 
 ## Human command surface
 
-- The intended human workflow is: GitHub issue (**`/create-issue feature|bug|chore …`** or the web UI), **`/plan-from-issue #n`**, the accepted plan’s **Build** button, **`/build-and-run [app]`**, **`/review`**, and **`/github-publish #n`**. After the PR is merged into **`dev`** on GitHub, run **`/sync-dev`** to fetch, check out local **`dev`**, and pull **`origin/dev`** before the next feature.
+- The intended human workflow is: GitHub issue (**`/create-issue feature|bug|chore …`** or the web UI), **`/plan-issue #n`**, the accepted plan’s **Build** button, **`/build-and-run [app]`**, **`/review-issue`**, and **`/publish-issue #n`**. After the PR is merged into **`dev`** on GitHub, run **`/sync-dev`** to fetch, check out local **`dev`**, and pull **`origin/dev`** before the next feature.
 - Cursor does **not** expose a repo-local way to hard-bind the Build button to a named subagent. This repo therefore steers Build toward **`coding-clanker`** with rules, plan handoff wording, and subagent descriptions.
 
 ## No Git worktrees (hard rule)
@@ -33,26 +33,28 @@ alwaysApply: false
 ## GitHub publish (hard rule)
 
 - Commit, push, and PR creation or update must be delegated to **`github-clanker`**.
-- `github-clanker` runs only after human feature review or test via **`/build-and-run`** and **`/review`** are ready.
+- `github-clanker` runs only after human feature review or test via **`/build-and-run`** and **`/review-issue`** are ready.
 - `github-clanker` may commit and push only the current feature branch and must target **`dev`** with the PR.
 
 ## Review agent (hard rule)
 
 - **`review-clanker`** is report-only (`readonly`).
-- Humans invoke it manually via **`/review`**; it is not the automatic start of Build.
+- Humans invoke it manually via **`/review-issue`**; it is not the automatic start of Build.
 - If review finds issues, the parent routes implementation back through **`coding-clanker`** by reusing the accepted plan’s **Build** step on the same feature branch.
 
 ## GitHub label workflow (required)
 
-- Only one status label should exist on an issue at a time: **`status:todo`**, **`status:in-progress`**, **`status:in-review`**, **`status:ready-to-merge`**, or **`status:done`**.
+- Only one status label should exist on an issue at a time: **`status:todo`**, **`status:ready-to-implement`**, **`status:ready-to-review`**, **`status:ready-to-publish`**, **`status:blocked`**, **`status:ready-to-merge`**, or **`status:done`**.
 - New issues start as **`status:todo`**.
-- On `coding-clanker` start, hooks set issue label **`status:in-progress`** and remove the other status labels.
-- On successful `coding-clanker` completion (local implementation ready), hooks set **`status:in-review`** and remove the other status labels.
-- On successful `github-clanker` completion (branch pushed and PR ready), hooks set **`status:ready-to-merge`** and remove the other status labels.
+- On successful `/plan-issue #n`, command flow removes the current `status:*` label and sets **`status:ready-to-implement`**.
+- On successful `/implement-issue #n`, command flow removes the current `status:*` label and sets **`status:ready-to-review`**.
+- On successful `/review-issue #n` (no `[[BLOCKING]]`), command flow removes the current `status:*` label and sets **`status:ready-to-publish`**.
+- On `/review-issue #n` with `[[BLOCKING]]`, command flow removes the current `status:*` label and sets **`status:blocked`**.
+- On successful `/publish-issue #n`, command flow removes the current `status:*` label and sets **`status:ready-to-merge`**.
 - On merge to `dev`, GitHub Actions set **`status:done`**, remove the other status labels, and close the issue.
-- In this workflow, **`status:in-review`** means local implementation is ready for human or review-agent feedback before publish. **`status:ready-to-merge`** means the PR is published and awaiting human merge into **`dev`**.
+- In this workflow, **`status:ready-to-review`** means local implementation is ready for human or review-agent feedback, **`status:ready-to-publish`** means review passed and publish is next, **`status:blocked`** means review found blockers, and **`status:ready-to-merge`** means the PR is published and awaiting human merge into **`dev`**.
 - In this workflow, **`status:done`** means **merged to `dev`**, not human-tested and not promoted to `main`.
-- If `#<n>` is missing from coding-clanker delegation, hook enforcement blocks coding-clanker startup.
+- If `#<n>` is missing from coding-clanker delegation, start-hook validation blocks coding-clanker startup.
 
 ## PR body contract (required)
 

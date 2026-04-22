@@ -6,6 +6,6 @@ alwaysApply: true
 # Build and implementation delegation
 
 - When the user runs **Build** on an **accepted plan**, or when you would otherwise implement planned feature work in the workspace, you **must not** edit application or feature code yourself.
-- Instead, use the **Task** tool to delegate **`coding-clanker`** (subagent type `coding-clanker`). The delegated task text **must** include the GitHub issue reference **`#<n>`** so hooks can set **`status:in-progress`** and **`status:in-review`** during that run. **`status:ready-to-merge`** is applied later by the **`github-clanker`** stop hook when the human runs **`/github-publish #n`**.
+- Instead, use the **Task** tool to delegate **`coding-clanker`** (subagent type `coding-clanker`). The delegated task text **must** include the GitHub issue reference **`#<n>`**. Label transitions are command-owned: **`/plan-issue #n`** sets **`status:ready-to-implement`**, **`/implement-issue #n`** sets **`status:ready-to-review`**, **`/review-issue #n`** sets **`status:ready-to-publish`** (or **`status:blocked`** when blockers are found), and **`/publish-issue #n`** sets **`status:ready-to-merge`**.
 - Pass the accepted plan (path or summary), suggested branch name, and scope in the delegation prompt.
 - Details: [.cursor/rules/git-workflow.mdc](.cursor/rules/git-workflow.mdc), [.cursor/agents/coding-clanker.md](.cursor/agents/coding-clanker.md).
