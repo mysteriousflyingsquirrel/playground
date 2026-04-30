@@ -1,0 +1,15 @@
+---
+description: Branch discipline for issue-based and exploratory work
+alwaysApply: true
+---
+
+# Git Branching
+
+- Primary branch flow MUST be `main <- dev <- feature/*` and `main <- dev <- vibe/*`.
+- Issue-based work MUST be done on a feature branch created from `dev`.
+- Exploratory work MUST be done on a vibe branch created from `dev`.
+- Normal code changes MUST NOT be made directly on `main`.
+- Normal code changes MUST NOT be made directly on `dev` unless the user explicitly allows it.
+- Before creating a branch from `dev`, `dev` MUST be synced with remote `dev`.
+- Issue-based feature branches MUST include the issue number and a short slug.
+- Vibe branches MUST use the `vibe/` prefix.

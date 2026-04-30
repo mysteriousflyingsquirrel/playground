@@ -1,0 +1,17 @@
+---
+description: Standard AI-assisted development operating model
+alwaysApply: true
+---
+
+# Operating Model
+
+- GitHub issues MUST be the source of truth for planned work.
+- For issue-based work, use this order:
+  1. `create-issue` for new issues from rough input
+  2. `prepare-issue #ID` for existing issues
+  3. Plan Mode for clarification and planning
+  4. Build for implementation only after plan approval
+- For exploratory work without an issue, run `prepare-vibe` first.
+- The agent MUST NOT implement during issue creation or issue preparation.
+- For issue-based work, Plan Mode MUST NOT be skipped unless the user explicitly asks to build directly.
+- Changes MUST stay scoped to the current issue or current branch intent.

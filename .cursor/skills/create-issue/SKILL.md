@@ -35,7 +35,7 @@ Do not hardcode sections, field names, option lists, or checkbox counts in this 
   - markdown body that matches the current template structure
 3. If essential information is missing, ask 1-3 short clarifying questions.
 4. Fill any still-missing non-essential fields with concise, neutral placeholders that still conform to template expectations.
-5. Create the issue through GitHub MCP with:
+5. Create the issue through the GitHub CLI (`gh`) with:
   - label `status:todo`
   - body matching the current template structure exactly
 6. Return the created issue URL and stop.
@@ -50,7 +50,32 @@ Ask only for blockers:
 
 Avoid asking about implementation details, architecture, branch strategy, or solution design.
 
-## GitHub MCP Usage
+## GitHub CLI Usage
 
-Before calling any MCP tool, inspect the GitHub MCP tool schema/descriptor for correct parameters.
-Then call the GitHub issue-creation tool with the prepared title, body, and label.
+Before any `gh` command, verify CLI availability and auth:
+
+```bash
+gh --version
+gh auth status
+```
+
+If either check fails:
+- inform the user
+- abort
+- suggest running:
+  - `gh auth login`
+  - `gh auth status`
+
+Use `gh issue create` to create the issue with prepared title, body, and label.
+
+Preferred command shape:
+
+```bash
+gh issue create --title "<title>" --body "<body>" --label "status:todo"
+```
+
+Notes:
+- Run from the target repository so `gh` resolves the correct remote.
+- If a `gh` command fails, inform the user, abort, and suggest the most likely manual fix.
+- If repository context is unavailable, suggest verifying the repository remote and retrying.
+- Return the created issue URL from `gh` output.

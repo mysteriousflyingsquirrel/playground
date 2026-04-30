@@ -30,7 +30,7 @@ Given an issue reference like `prepare-issue #23`, prepare planning context and 
   - required fields/sections
   - details structure and headings
   - where acceptance criteria live in the issue body
-3. Read the issue from GitHub via MCP.
+3. Read the issue from GitHub via `gh`.
 4. Map extracted issue content according to the current template structure.
 5. Check out local `dev`.
 6. Sync local `dev` with remote `dev`.
@@ -39,7 +39,7 @@ Given an issue reference like `prepare-issue #23`, prepare planning context and 
   - issue number
   - short slug derived from issue title (lowercase, hyphen-separated, alphanumeric plus hyphens)
   - example format: `feature/23-short-title`
-9. Set or update issue label to `status:in-planning`.
+9. Replace the current status label with `status:in-planning` (do not stack status labels).
 10. Generate and show a Plan Mode prompt for the user to paste.
 11. Stop.
 
@@ -50,7 +50,7 @@ Follow these guards exactly:
 - If reading the GitHub issue fails:
   - inform the user
   - abort
-  - suggest checking issue number or GitHub MCP connection
+  - suggest checking issue number, `gh` authentication, or repository remote configuration
 - If checking out `dev` fails:
   - inform the user
   - abort
@@ -66,14 +66,46 @@ Follow these guards exactly:
 - If updating issue label fails:
   - inform the user
   - keep the prepared branch if it was already created
-  - explain the label must be updated manually
+  - explain exactly which labels must be removed and which single status label must be added manually
   - continue only to showing the Plan Mode prompt if branch prep succeeded
 - On any failure, do not continue to later steps unless explicitly safe per the rules above.
 
-## GitHub MCP Usage
+## GitHub CLI Usage
 
-- Before calling any MCP tool, inspect the GitHub MCP tool schema/descriptor for correct parameters.
-- Use GitHub MCP to read the issue and set/update labels.
+Use `gh` to read issue content and update labels.
+
+Before any `gh` command, verify CLI availability and auth:
+
+```bash
+gh --version
+gh auth status
+```
+
+If either check fails:
+- inform the user
+- abort
+- suggest running:
+  - `gh auth login`
+  - `gh auth status`
+
+Preferred command shapes:
+
+```bash
+gh issue view <number> --json number,title,body,labels,url
+# remove existing status label(s), then add status:in-planning
+gh issue edit <number> --remove-label "<previous-status-1>" --remove-label "<previous-status-2>" --add-label "status:in-planning"
+```
+
+Notes:
+- Run from the target repository so `gh` resolves the correct remote.
+- Supported status labels only:
+  - `status:todo`
+  - `status:in-planning`
+  - `status:in-progress`
+  - `status:ready-to-review`
+  - `status:ready-to-merge`
+- Always replace the previous `status:*` label instead of stacking.
+- If a `gh` command fails, inform the user, abort when unsafe to continue, and suggest the most likely manual fix.
 
 ## Template Compatibility Requirement
 
@@ -105,9 +137,39 @@ Always output a paste-ready prompt with these sections filled from the issue, cu
 - Current branch name
 - Instructions:
   - inspect the relevant codebase before planning
-  - ask clarifying questions until nothing important is ambiguous
-  - produce an implementation plan only, not code
+  - during Plan Mode, do not implement code
+  - during Plan Mode, produce a clear implementation plan
   - implementation happens later when the user clicks Build
+  - when Build starts, replace issue status label `status:in-planning` with `status:in-progress`
+  - when implementation is complete, verify acceptance criteria as far as possible, summarize implementation, set `status:ready-to-review`, and add a structured Markdown issue comment for human review
+  - do not set `status:ready-to-review` if implementation failed, blockers remain, checks fail, or important acceptance criteria are incomplete
+  - if incomplete/blocked, keep `status:in-progress` and post a structured Markdown comment that clearly states what is blocked or incomplete
+
+Use these issue comment formats in Build mode:
+
+```markdown
+## Implementation Ready For Review
+
+- Scope: <implemented scope summary>
+- Acceptance criteria: <met|partially met> - <evidence>
+- Verification: <commands and outcomes>
+
+## Next Action
+
+- Please perform human review.
+```
+
+```markdown
+## Implementation Blocked
+
+- Blocker: <what is blocked or incomplete>
+- Impact: <which acceptance criteria are affected>
+- Verification: <commands and outcomes, if any>
+
+## Next Action
+
+- <single best next step to unblock>
+```
 
 Use this exact structure:
 
@@ -127,8 +189,16 @@ Acceptance criteria:
 
 Instructions:
 1) Inspect the relevant codebase and current patterns before planning.
-2) Ask clarifying questions until nothing important is ambiguous.
-3) Produce an implementation plan only; do not write or modify code.
+2) During Plan Mode, do not write or modify code.
+3) During Plan Mode, produce a clear implementation plan.
 4) Implementation happens later when the user clicks Build.
+5) When Build starts, replace the related GitHub issue status label from `status:in-planning` to `status:in-progress`.
+6) When you believe implementation is complete:
+   - verify the acceptance criteria as far as possible
+   - summarize what was implemented
+   - replace the current status label with `status:ready-to-review`
+   - add a structured GitHub issue comment saying implementation is ready for human review
+7) Do not set `status:ready-to-review` if implementation failed, blockers remain, checks fail, or important acceptance criteria are incomplete.
+8) If blocked or incomplete, keep `status:in-progress` and add a structured GitHub issue comment describing what is blocked or incomplete and the next action.
 ```
 
