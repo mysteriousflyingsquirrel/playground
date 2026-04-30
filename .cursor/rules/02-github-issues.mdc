@@ -1,0 +1,40 @@
+---
+description: GitHub issue lifecycle status policy
+alwaysApply: true
+---
+
+# GitHub Issues
+
+## Issue Status Lifecycle
+
+- `status:todo`: issue exists, work not prepared.
+- `status:in-planning`: issue prepared for planning.
+- `status:in-progress`: implementation running or incomplete.
+- `status:ready-to-review`: implementation complete and ready for review.
+- `status:ready-to-publish`: review passed; ready for PR creation.
+- `status:ready-to-merge`: PR exists and is ready for human merge.
+
+## Status Transitions
+
+- `create-issue` MUST create issues with `status:todo`.
+- `prepare-issue` MUST replace the current status label with `status:in-planning`.
+- Build MUST replace the current status label with `status:in-progress` when implementation starts.
+- Build MUST replace the current status label with `status:ready-to-review` only when implementation is complete and no known blocker remains.
+- `review-issue` MUST replace `status:ready-to-review` with `status:ready-to-publish` when review passes.
+- `review-issue` MUST replace the current status label with `status:in-progress` when review finds blockers.
+- `publish-issue` MUST replace `status:ready-to-publish` with `status:ready-to-merge` after PR creation.
+- Human merge MUST close the issue through GitHub.
+
+## Status Label Rules
+
+- Exactly one `status:*` label MUST be present at a time.
+- When changing status, the previous `status:*` label MUST be removed before adding the new one.
+- Additional status labels MUST NOT be invented unless the user explicitly requests them.
+- `status:ready-to-review` MUST NOT be set if implementation failed, blockers remain, checks failed, or acceptance criteria are incomplete.
+- `status:ready-to-publish` MUST NOT be set if review found blockers.
+- `status:ready-to-merge` MUST NOT be set before a PR exists.
+
+## Issue Comments
+
+- Important planning notes, blockers, review results, implementation summaries, and PR links SHOULD be added as issue comments.
+- Comments SHOULD be concise and useful.

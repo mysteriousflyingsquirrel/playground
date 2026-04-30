@@ -21,6 +21,7 @@ Prepare a safe feature branch for exploratory work when there is no existing Git
 - Do not implement code.
 - Do not modify project files except Git branch state.
 - Stop immediately after the branch is prepared and reported.
+- If current branch is not `dev`, ask exactly one branch-state question with options and wait for user choice before continuing.
 
 ## Workflow
 
@@ -28,20 +29,29 @@ Follow these steps in order. If a step fails, stop and apply the matching failur
 
 1. Identify topic input:
   - Parse optional topic text after `prepare-vibe`.
-2. Check out local `dev` branch.
-3. Sync local `dev` with remote `dev`:
+2. Check current branch.
+  - If already on `dev`, continue.
+  - If not on `dev`, ask what to do and stop until user chooses one option:
+    - Move current changes to a new branch, then continue with `dev`.
+    - Continue anyway by switching to `dev` directly.
+    - Abort and stay on the current branch.
+3. Check out local `dev` branch.
+4. Sync local `dev` with remote `dev`:
   - Fetch remote updates.
   - Fast-forward local `dev` to match `origin/dev` when possible.
-4. Build branch slug:
+5. Build branch slug:
   - If topic exists: convert topic to a short lowercase slug using letters, numbers, and hyphens.
   - If no topic: use a simple fallback such as `vibe/YYYY-MM-DD` or `vibe/scratch`.
-5. Create and check out the new branch from synced `dev`:
+6. Create and check out the new branch from synced `dev`:
   - Branch format: `vibe/<slug>`
-6. Verify current branch name.
-7. Stop.
+7. Verify current branch name.
+8. Stop.
 
 ## Failure Handling
 
+- If current branch is not `dev` and user did not choose an option:
+  - Inform the user and pause.
+  - Do not proceed with checkout/sync/branch creation.
 - If checking out `dev` fails:
   - Inform the user and abort.
   - Suggest checking whether `dev` exists locally or remotely.

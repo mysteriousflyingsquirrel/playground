@@ -12,6 +12,7 @@ Given an issue reference like `prepare-issue #23`, prepare planning context and 
 ## Behavior Rules
 
 - Do not ask clarifying questions.
+- Exception: if current branch is not `dev`, ask exactly one branch-state question with options and wait for user choice.
 - Do not implement code.
 - Do not modify project files except Git branch state.
 - Operate in a project-agnostic way. Do not assume any specific stack, product, architecture, or infrastructure.
@@ -32,16 +33,22 @@ Given an issue reference like `prepare-issue #23`, prepare planning context and 
   - where acceptance criteria live in the issue body
 3. Read the issue from GitHub via `gh`.
 4. Map extracted issue content according to the current template structure.
-5. Check out local `dev`.
-6. Sync local `dev` with remote `dev`.
-7. Create a new feature branch from `dev`.
-8. Name the branch using:
+5. Check current branch.
+  - If already on `dev`, continue.
+  - If not on `dev`, ask what to do and stop until user chooses one option:
+    - Move current changes to a new branch, then continue with `dev`.
+    - Continue anyway by switching to `dev` directly.
+    - Abort and stay on the current branch.
+6. Check out local `dev`.
+7. Sync local `dev` with remote `dev`.
+8. Create a new feature branch from `dev`.
+9. Name the branch using:
   - issue number
   - short slug derived from issue title (lowercase, hyphen-separated, alphanumeric plus hyphens)
   - example format: `feature/23-short-title`
-9. Replace the current status label with `status:in-planning` (do not stack status labels).
-10. Generate and show a Plan Mode prompt for the user to paste.
-11. Stop.
+10. Replace the current status label with `status:in-planning` (do not stack status labels).
+11. Generate and show a Plan Mode prompt for the user to paste.
+12. Stop.
 
 ## Failure Handling
 
@@ -51,6 +58,9 @@ Follow these guards exactly:
   - inform the user
   - abort
   - suggest checking issue number, `gh` authentication, or repository remote configuration
+- If current branch is not `dev` and user did not choose an option:
+  - inform the user
+  - pause and do not proceed
 - If checking out `dev` fails:
   - inform the user
   - abort
@@ -137,6 +147,7 @@ Always output a paste-ready prompt with these sections filled from the issue, cu
 - Current branch name
 - Instructions:
   - inspect the relevant codebase before planning
+  - if the issue touches UI, read `docs/design/design-system.md` before planning
   - during Plan Mode, do not implement code
   - during Plan Mode, produce a clear implementation plan
   - implementation happens later when the user clicks Build
@@ -189,16 +200,17 @@ Acceptance criteria:
 
 Instructions:
 1) Inspect the relevant codebase and current patterns before planning.
-2) During Plan Mode, do not write or modify code.
-3) During Plan Mode, produce a clear implementation plan.
-4) Implementation happens later when the user clicks Build.
-5) When Build starts, replace the related GitHub issue status label from `status:in-planning` to `status:in-progress`.
-6) When you believe implementation is complete:
+2) If the issue touches UI, read `docs/design/design-system.md` before planning.
+3) During Plan Mode, do not write or modify code.
+4) During Plan Mode, produce a clear implementation plan.
+5) Implementation happens later when the user clicks Build.
+6) When Build starts, replace the related GitHub issue status label from `status:in-planning` to `status:in-progress`.
+7) When you believe implementation is complete:
    - verify the acceptance criteria as far as possible
    - summarize what was implemented
    - replace the current status label with `status:ready-to-review`
    - add a structured GitHub issue comment saying implementation is ready for human review
-7) Do not set `status:ready-to-review` if implementation failed, blockers remain, checks fail, or important acceptance criteria are incomplete.
-8) If blocked or incomplete, keep `status:in-progress` and add a structured GitHub issue comment describing what is blocked or incomplete and the next action.
+8) Do not set `status:ready-to-review` if implementation failed, blockers remain, checks fail, or important acceptance criteria are incomplete.
+9) If blocked or incomplete, keep `status:in-progress` and add a structured GitHub issue comment describing what is blocked or incomplete and the next action.
 ```
 

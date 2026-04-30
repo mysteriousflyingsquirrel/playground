@@ -112,11 +112,14 @@ Failure handling:
 ### 5) Compare Implementation To Issue
 
 - Review issue requirements and acceptance criteria against the observed implementation.
+- If UI files changed, read `docs/design/design-system.md` and review the implementation against it.
+- Explicitly review UI-related changes against `.cursor/rules/03-design-system.mdc`.
 - Determine:
   - covered criteria
   - partially covered criteria
   - missing criteria
   - risks or ambiguities
+- For UI changes, record whether design-system usage is compliant, partially compliant, or non-compliant, including concrete evidence for any deviations.
 
 ### 6) Verification Commands
 
@@ -222,6 +225,7 @@ Always include:
 - acceptance criteria review
 - changed files summary
 - verification performed
+- design-system compliance review for UI-related changes (against `.cursor/rules/03-design-system.mdc`)
 - blockers or risks
 - next recommended action
 
@@ -241,6 +245,9 @@ Changed files summary:
 
 Verification performed:
 - <command>: <pass|fail|not run> - <notes>
+
+Design-system compliance (UI changes):
+- <compliant|partial|non-compliant> - <evidence and deviations>
 
 Blockers or risks:
 - <none|itemized blockers/risks>
