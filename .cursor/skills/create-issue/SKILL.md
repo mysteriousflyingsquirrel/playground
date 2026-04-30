@@ -22,36 +22,31 @@ Create one GitHub issue from a rough request with minimal clarification, then st
 
 ## Required Issue Content
 
-Always produce issue content in this shape:
+Always produce issue content that strictly follows the current repository issue form schema in `.github/ISSUE_TEMPLATE/issue.yml`.
 
-- **Type**: one of `Feature`, `Bug`, `Chore`, `Refactor`, `Documentation`, `Other`
-- **Details**:
-  - `Problem / Goal`
-  - `Expected Outcome`
-  - `Acceptance Criteria` (3 checkbox items)
-  - `Context / Notes`
+Do not hardcode sections, field names, option lists, or checkbox counts in this skill. Treat the template as the single source of truth.
 
 ## Workflow
 
 1. Read `.github/ISSUE_TEMPLATE/issue.yml`.
 2. Parse the rough request into:
-   - issue title
-   - type
-   - details sections
+  - issue title
+  - values for the exact fields defined in the current template
+  - markdown body that matches the current template structure
 3. If essential information is missing, ask 1-3 short clarifying questions.
-4. Fill any still-missing non-essential parts with concise, neutral placeholders.
+4. Fill any still-missing non-essential fields with concise, neutral placeholders that still conform to template expectations.
 5. Create the issue through GitHub MCP with:
-   - label `status:todo`
-   - body matching the template structure
+  - label `status:todo`
+  - body matching the current template structure exactly
 6. Return the created issue URL and stop.
 
 ## Clarification Heuristics
 
 Ask only for blockers:
 
-- **Missing type** and cannot infer confidently.
-- **No clear problem/goal**.
-- **No testable acceptance criteria** can be derived.
+- **A required template field** has no reliable value.
+- **A required template constraint** cannot be satisfied (for example required option choice or minimum checklist items).
+- **No clear problem/goal** can be mapped into the required template fields.
 
 Avoid asking about implementation details, architecture, branch strategy, or solution design.
 
