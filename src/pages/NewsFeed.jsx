@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { cn } from '../cn.js'
 
 const newsItems = [
   {
@@ -60,46 +59,55 @@ export default function NewsFeed() {
   }
 
   return (
-    <div className="max-w-5xl">
-      <h1 className="mb-3 text-[1.75rem] font-semibold">News feed</h1>
-      <p className="mb-6 text-[1.05rem] leading-normal text-muted">
-        Five example news stories shown as expandable cards using mock content only.
-      </p>
+    <div className="ds-page">
+      <header className="ds-page-header">
+        <div className="ds-page-header-inner">
+          <p className="ds-page-kicker">Content</p>
+          <h1 className="ds-page-title">News feed</h1>
+          <p className="ds-page-lede">
+            Five example news stories shown as expandable cards using mock content only. Secondary actions use the outlined
+            primary button pattern from the design system.
+          </p>
+        </div>
+      </header>
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div className="grid w-full min-w-0 grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
         {newsItems.map((item) => {
           const isExpanded = expandedIds.has(item.id)
           const contentId = `${item.id}-content`
           return (
-            <article
-              key={item.id}
-              className="overflow-hidden rounded-[10px] border border-border bg-surface"
-            >
-              <img
-                src={item.imageUrl}
-                alt={item.title}
-                className="block h-48 w-full object-cover"
-                width={720}
-                height={448}
-                loading="lazy"
-              />
-              <div className="flex flex-col gap-3 px-4 py-4">
-                <h2 className="text-lg font-semibold text-fg">{item.title}</h2>
+            <article key={item.id} className="ds-card-interactive flex flex-col ring-1 ring-primary/[0.04]">
+              <div className="relative aspect-[720/448] overflow-hidden rounded-t-2xl bg-muted-bg">
+                <img
+                  src={item.imageUrl}
+                  alt=""
+                  className="block h-full w-full object-cover"
+                  width={720}
+                  height={448}
+                  loading="lazy"
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary/70 via-secondary/15 to-transparent"
+                  aria-hidden
+                />
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 px-4 pb-4 pt-14">
+                  <p className="text-sm font-bold leading-snug text-on-primary drop-shadow-sm">{item.title}</p>
+                </div>
+              </div>
+              <div className="flex flex-1 flex-col gap-3 border-t border-border px-5 py-5">
+                <h2 className="text-lg font-bold tracking-tight text-fg">{item.title}</h2>
                 <p className="m-0 text-sm leading-relaxed text-muted">{item.headline}</p>
                 <button
                   type="button"
-                  className={cn(
-                    'w-fit cursor-pointer rounded-md border border-border px-3 py-1.5 text-sm font-medium text-fg transition-colors',
-                    'hover:border-accent-dim hover:bg-accent/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
-                  )}
+                  className="ds-btn-secondary mt-auto w-fit px-4 py-2.5 text-sm"
                   onClick={() => toggleExpanded(item.id)}
                   aria-expanded={isExpanded}
                   aria-controls={contentId}
                 >
-                  {isExpanded ? 'Collapse' : 'Read more'}
+                  {isExpanded ? 'Collapse article' : 'Read full article'}
                 </button>
                 {isExpanded ? (
-                  <p id={contentId} className="m-0 border-t border-border pt-3 text-sm leading-relaxed text-fg">
+                  <p id={contentId} className="m-0 border-t border-border pt-4 text-sm leading-relaxed text-fg">
                     {item.content}
                   </p>
                 ) : null}

@@ -1,26 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
 @import 'tailwindcss';
 
-@theme {
-  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+/*
+  Tokens: docs/design/design-system.md (Authority + Global Rules + Implementation mapping).
+  Semantic utilities include bg-bg, bg-surface, text-fg, text-muted, bg-muted-bg, border-border,
+  text-primary, bg-accent, text-on-accent, shadow-ds-*.
+  Aliases --color-background / --color-foreground match DS doc names; do not add --spacing-xs to @theme.
+*/
 
-  /* Dark defaults (also used when `data-theme` is absent or `dark`) */
-  --color-bg: #0f1419;
-  --color-surface: #1a2332;
-  --color-border: #2d3a4d;
-  --color-fg: #e7ecf3;
-  --color-muted: #8b9cb3;
-  --color-accent: #6eb5ff;
-  --color-accent-dim: #4a8fd4;
+@theme {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+
+  --shadow-ds-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-ds-md: 0 4px 6px rgb(0 0 0 / 0.1);
+  --shadow-ds-lg: 0 10px 15px rgb(0 0 0 / 0.1);
+  --shadow-ds-xl: 0 20px 25px rgb(0 0 0 / 0.15);
+
+  /* Light — Taurex baseline (docs/design/design-system.md Color Palette) */
+  --color-bg: #ffffff;
+  --color-background: #ffffff;
+  --color-surface: #ffffff;
+  --color-border: #dbeafe;
+  --color-fg: #052a57;
+  --color-foreground: #052a57;
+  --color-muted: #5b6478;
+  --color-muted-bg: #e9eef6;
+  --color-primary: #052a57;
+  --color-on-primary: #ffffff;
+  --color-secondary: #0f69ed;
+  --color-accent: #d97706;
+  --color-on-accent: #ffffff;
+  --color-destructive: #dc2626;
+  --color-ring: #052a57;
 }
 
-:root[data-theme='light'] {
-  --color-bg: #f4f6fb;
-  --color-surface: #ffffff;
-  --color-border: #d8dee8;
-  --color-fg: #121826;
-  --color-muted: #5c6b80;
-  --color-accent: #2563eb;
-  --color-accent-dim: #1d4ed8;
+:root[data-theme='dark'] {
+  --color-bg: #0f172a;
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-border: #334155;
+  --color-fg: #f1f5f9;
+  --color-foreground: #f1f5f9;
+  --color-muted: #94a3b8;
+  --color-muted-bg: #273548;
+  --color-primary: #3b82f6;
+  --color-on-primary: #ffffff;
+  --color-secondary: #60a5fa;
+  --color-accent: #f59e0b;
+  --color-on-accent: #0f172a;
+  --color-destructive: #f87171;
+  --color-ring: #60a5fa;
 }
 
 @layer base {
@@ -30,11 +66,174 @@
     box-sizing: border-box;
   }
 
+  /* 10% smaller UI: rem-based spacing/type from Tailwind + @theme follow root. */
+  html {
+    font-size: 90%;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   body {
     @apply m-0 min-h-screen bg-bg font-sans text-base leading-normal text-fg antialiased;
   }
 
   #root {
-    @apply min-h-screen;
+    @apply min-h-screen min-w-0;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-secondary) 22%, var(--color-bg));
+    color: var(--color-fg);
+  }
+}
+
+/* Page chrome: headers and ledes span full inner width (min-w-0 prevents shrink-to-min-content). */
+@layer components {
+  /* App shell: subtle depth from brand blues — tokens only */
+  .ds-app-main-wash {
+    background-image:
+      radial-gradient(ellipse 85% 50% at 50% -15%, color-mix(in srgb, var(--color-secondary) 12%, transparent), transparent 70%),
+      radial-gradient(ellipse 55% 42% at 100% 0%, color-mix(in srgb, var(--color-primary) 8%, transparent), transparent 58%);
+  }
+
+  .ds-page {
+    @apply w-full min-w-0 space-y-8 sm:space-y-10;
+  }
+
+  .ds-page-header {
+    @apply relative w-full min-w-0 max-w-none overflow-hidden rounded-2xl border border-border bg-surface px-6 py-8 shadow-ds-md sm:px-8 sm:py-10;
+  }
+
+  .ds-page-header::before {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-secondary to-accent;
+  }
+
+  .ds-page-header-inner {
+    @apply relative w-full min-w-0 max-w-none;
+  }
+
+  .ds-page-kicker {
+    @apply block w-full min-w-0 text-xs font-semibold uppercase tracking-[0.14em] text-accent;
+  }
+
+  .ds-page-title {
+    @apply mt-2 block w-full min-w-0 text-3xl font-bold tracking-tight text-fg sm:text-4xl;
+  }
+
+  .ds-page-lede {
+    @apply mt-4 block w-full min-w-0 max-w-none text-pretty text-base leading-relaxed text-muted sm:text-lg;
+  }
+
+  .ds-section {
+    @apply w-full min-w-0 rounded-2xl border border-border bg-surface p-6 shadow-ds-md sm:p-8;
+  }
+
+  .ds-section-title {
+    @apply text-base font-bold tracking-tight text-fg;
+  }
+
+  .ds-section-prose {
+    @apply w-full min-w-0 max-w-none text-pretty text-[0.9375rem] leading-relaxed text-muted;
+  }
+
+  /* Buttons — Component Specs: CTA uses accent; secondary is outline primary */
+  .ds-btn-primary {
+    @apply m-0 inline-flex cursor-pointer items-center justify-center rounded-lg border border-accent bg-accent px-4 py-3 text-sm font-semibold text-on-accent shadow-ds-md transition-[opacity,box-shadow] duration-200 hover:opacity-90 hover:shadow-ds-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-accent)];
+  }
+
+  .ds-btn-secondary {
+    @apply m-0 inline-flex cursor-pointer items-center justify-center rounded-lg border-2 border-primary bg-transparent px-4 py-3 text-sm font-semibold text-primary transition-[background-color,border-color,opacity] duration-200 hover:bg-muted-bg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-ring)];
+  }
+
+  .ds-btn-ghost {
+    @apply m-0 inline-flex cursor-pointer items-center justify-center rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-fg shadow-ds-sm transition-[border-color,box-shadow,background-color] duration-200 hover:border-secondary/35 hover:bg-muted-bg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-ring)];
+  }
+
+  .ds-field-label {
+    @apply mb-1.5 block text-sm font-medium text-fg;
+  }
+
+  .ds-input {
+    @apply w-full rounded-lg border border-border bg-surface px-4 py-3 text-base text-fg shadow-ds-sm transition-[border-color,box-shadow] duration-200 placeholder:text-muted focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/20;
+  }
+
+  .ds-select {
+    @apply w-full cursor-pointer rounded-lg border border-border bg-surface px-4 py-3 text-base text-fg shadow-ds-sm transition-[border-color,box-shadow] duration-200 focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/20;
+  }
+
+  .ds-check-label {
+    @apply inline-flex cursor-pointer items-center gap-3 text-[0.9375rem] text-fg [&_input]:h-4 [&_input]:w-4 [&_input]:accent-primary [&_input]:cursor-pointer;
+  }
+
+  .ds-kbd {
+    @apply rounded-lg border border-border bg-muted-bg px-2 py-0.5 font-mono text-[0.8125rem] font-medium text-secondary;
+  }
+
+  .ds-table-shell {
+    @apply w-full min-w-0 overflow-hidden rounded-2xl border border-border bg-surface shadow-ds-md;
+  }
+
+  .ds-table {
+    @apply w-full min-w-0 border-collapse text-[0.9375rem];
+  }
+
+  .ds-th {
+    @apply border-b border-border bg-muted-bg px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted;
+  }
+
+  .ds-td {
+    @apply border-b border-border px-4 py-3 text-left align-top text-[0.9375rem] text-fg transition-colors duration-150;
+  }
+
+  .ds-card-interactive {
+    @apply overflow-hidden rounded-2xl border border-border bg-surface shadow-ds-md transition-[box-shadow,opacity,border-color] duration-200 hover:border-secondary/25 hover:shadow-ds-lg;
+  }
+
+  .ds-list-check {
+    @apply m-0 flex gap-3 text-pretty text-[0.9375rem] leading-relaxed text-muted;
+  }
+
+  .ds-list-check-icon {
+    @apply mt-0.5 h-5 w-5 shrink-0 text-secondary;
+  }
+
+  .ds-toolbar {
+    @apply flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface px-4 py-3 shadow-ds-sm sm:px-5;
+  }
+
+  .ds-stat {
+    @apply relative overflow-hidden rounded-2xl border border-border bg-surface p-5 shadow-ds-sm;
+  }
+
+  .ds-stat::after {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-primary via-secondary to-accent opacity-90;
+  }
+
+  .ds-stat-value {
+    @apply text-2xl font-bold tabular-nums tracking-tight text-fg;
+  }
+
+  .ds-stat-label {
+    @apply mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-muted;
+  }
+
+  /* Shell: sidebar nav chip */
+  .ds-nav-item-icon-wrap {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-[border-color,background-color,box-shadow] duration-200;
   }
 }

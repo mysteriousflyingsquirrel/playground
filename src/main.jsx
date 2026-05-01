@@ -13,7 +13,7 @@ function readInitialTheme() {
   } catch {
     /* ignore (e.g. private mode) */
   }
-  return 'dark'
+  return 'light'
 }
 
 document.documentElement.dataset.theme = readInitialTheme()

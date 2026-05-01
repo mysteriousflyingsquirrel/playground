@@ -8,7 +8,9 @@ alwaysApply: true
 ## Design-system source
 
 - If `docs/design/design-system.md` exists, read it before planning, implementing, or reviewing UI changes.
+- When the doc includes **Authority & scope** (or equivalent), follow it: Global Rules outweigh optional Style Guidelines unless the user explicitly asks for an alternate aesthetic.
 - Treat `docs/design/design-system.md` as the source of truth for visual direction, colors, typography, spacing, components, patterns, interaction behavior, and UI quality standards.
+- Align theme tokens in `src/index.css` with the design system’s implementation mapping when changing palette or redesigning UI.
 - Do not invent a new visual direction unless the user explicitly requests a redesign.
 
 ## Mandatory behavior for UI work

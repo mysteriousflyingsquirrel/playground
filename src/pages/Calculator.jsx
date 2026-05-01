@@ -15,11 +15,12 @@ function formatNumber(n) {
 }
 
 const btnBase =
-  'm-0 cursor-pointer rounded-lg border border-border bg-surface px-2 py-[0.65rem] font-inherit text-[1.05rem] font-medium text-fg transition-colors hover:border-accent-dim hover:bg-accent/8 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
+  'm-0 min-h-[2.75rem] min-w-0 cursor-pointer rounded-lg border border-border bg-surface px-2 py-2 font-inherit text-[1.05rem] font-semibold text-fg shadow-ds-sm transition-[border-color,background-color,box-shadow] duration-200 hover:border-secondary/45 hover:shadow-ds-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-ring)]'
 
-const btnOp = 'text-accent bg-accent/10 hover:bg-accent/[0.18]'
+const btnOp =
+  'border-primary/30 bg-muted-bg text-primary hover:border-primary/50 hover:bg-muted-bg/90'
 const btnEquals =
-  'border-accent-dim bg-accent/[0.22] font-semibold hover:bg-accent/[0.32] hover:text-fg'
+  'border-accent bg-accent text-on-accent shadow-ds-md transition-[opacity,box-shadow] duration-200 hover:opacity-90 hover:shadow-ds-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-accent)]'
 
 export default function Calculator() {
   const [display, setDisplay] = useState('0')
@@ -161,80 +162,91 @@ export default function Calculator() {
   }, [error, clearError])
 
   return (
-    <div className="max-w-2xl">
-      <h1 className="mb-3 text-[1.75rem] font-semibold">Calculator</h1>
-      <p className="mb-6 text-[1.05rem] leading-normal text-muted [&_strong]:text-fg">
-        Basic operations (+ − × ÷), <strong>CE</strong> clears the current entry,{' '}
-        <strong>=</strong> completes the calculation.
-      </p>
-      <section className="mt-2 max-w-xs" aria-label="Calculator">
-        <output
-          className="mb-3 block min-h-12 w-full break-all rounded-lg border border-border bg-surface px-4 py-3 text-right text-2xl font-medium tabular-nums leading-snug text-fg"
-          htmlFor="calculator-keys"
-          aria-live="polite"
-        >
-          {display}
-        </output>
-        <div id="calculator-keys" className="grid grid-cols-4 gap-2">
-          <button type="button" className={btnBase} onClick={clearEntry}>
-            CE
-          </button>
-          <span className="invisible min-h-[2.75rem]" aria-hidden="true" />
-          <span className="invisible min-h-[2.75rem]" aria-hidden="true" />
-          <button type="button" className={cn(btnBase, btnOp)} onClick={() => commitOperator('/')}>
-            ÷
-          </button>
-
-          <button type="button" className={btnBase} onClick={() => inputDigit(7)}>
-            7
-          </button>
-          <button type="button" className={btnBase} onClick={() => inputDigit(8)}>
-            8
-          </button>
-          <button type="button" className={btnBase} onClick={() => inputDigit(9)}>
-            9
-          </button>
-          <button type="button" className={cn(btnBase, btnOp)} onClick={() => commitOperator('*')}>
-            ×
-          </button>
-
-          <button type="button" className={btnBase} onClick={() => inputDigit(4)}>
-            4
-          </button>
-          <button type="button" className={btnBase} onClick={() => inputDigit(5)}>
-            5
-          </button>
-          <button type="button" className={btnBase} onClick={() => inputDigit(6)}>
-            6
-          </button>
-          <button type="button" className={cn(btnBase, btnOp)} onClick={() => commitOperator('-')}>
-            −
-          </button>
-
-          <button type="button" className={btnBase} onClick={() => inputDigit(1)}>
-            1
-          </button>
-          <button type="button" className={btnBase} onClick={() => inputDigit(2)}>
-            2
-          </button>
-          <button type="button" className={btnBase} onClick={() => inputDigit(3)}>
-            3
-          </button>
-          <button type="button" className={cn(btnBase, btnOp)} onClick={() => commitOperator('+')}>
-            +
-          </button>
-
-          <button type="button" className={cn(btnBase, 'col-span-2')} onClick={() => inputDigit(0)}>
-            0
-          </button>
-          <button type="button" className={btnBase} onClick={inputDot}>
-            .
-          </button>
-          <button type="button" className={cn(btnBase, btnEquals)} onClick={equals}>
-            =
-          </button>
+    <div className="ds-page">
+      <header className="ds-page-header">
+        <div className="ds-page-header-inner">
+          <p className="ds-page-kicker">Tools</p>
+          <h1 className="ds-page-title">Calculator</h1>
+          <p className="ds-page-lede">
+            Basic operations (+ − × ÷). <strong className="font-semibold text-fg">CE</strong> clears the current entry;{' '}
+            <strong className="font-semibold text-fg">=</strong> completes the calculation.
+          </p>
         </div>
-      </section>
+      </header>
+
+      <div className="mx-auto w-full max-w-md lg:max-w-lg">
+        <section
+          className="w-full max-w-none rounded-2xl border border-border bg-surface p-6 shadow-ds-xl ring-1 ring-primary/[0.06] sm:p-8"
+          aria-label="Calculator"
+        >
+          <output
+            className="mb-5 block min-h-16 w-full min-w-0 break-all rounded-xl border border-border bg-muted-bg/80 px-4 py-4 text-right text-3xl font-bold tabular-nums leading-snug text-fg shadow-inner shadow-ds-sm"
+            htmlFor="calculator-keys"
+            aria-live="polite"
+          >
+            {display}
+          </output>
+          <div id="calculator-keys" className="grid w-full min-w-0 grid-cols-4 gap-2.5">
+            <button type="button" className={btnBase} onClick={clearEntry}>
+              CE
+            </button>
+            <span className="invisible min-h-[2.75rem]" aria-hidden="true" />
+            <span className="invisible min-h-[2.75rem]" aria-hidden="true" />
+            <button type="button" className={cn(btnBase, btnOp)} onClick={() => commitOperator('/')}>
+              ÷
+            </button>
+
+            <button type="button" className={btnBase} onClick={() => inputDigit(7)}>
+              7
+            </button>
+            <button type="button" className={btnBase} onClick={() => inputDigit(8)}>
+              8
+            </button>
+            <button type="button" className={btnBase} onClick={() => inputDigit(9)}>
+              9
+            </button>
+            <button type="button" className={cn(btnBase, btnOp)} onClick={() => commitOperator('*')}>
+              ×
+            </button>
+
+            <button type="button" className={btnBase} onClick={() => inputDigit(4)}>
+              4
+            </button>
+            <button type="button" className={btnBase} onClick={() => inputDigit(5)}>
+              5
+            </button>
+            <button type="button" className={btnBase} onClick={() => inputDigit(6)}>
+              6
+            </button>
+            <button type="button" className={cn(btnBase, btnOp)} onClick={() => commitOperator('-')}>
+              −
+            </button>
+
+            <button type="button" className={btnBase} onClick={() => inputDigit(1)}>
+              1
+            </button>
+            <button type="button" className={btnBase} onClick={() => inputDigit(2)}>
+              2
+            </button>
+            <button type="button" className={btnBase} onClick={() => inputDigit(3)}>
+              3
+            </button>
+            <button type="button" className={cn(btnBase, btnOp)} onClick={() => commitOperator('+')}>
+              +
+            </button>
+
+            <button type="button" className={cn(btnBase, 'col-span-2')} onClick={() => inputDigit(0)}>
+              0
+            </button>
+            <button type="button" className={btnBase} onClick={inputDot}>
+              .
+            </button>
+            <button type="button" className={cn(btnBase, btnEquals)} onClick={equals}>
+              =
+            </button>
+          </div>
+        </section>
+      </div>
     </div>
   )
 }

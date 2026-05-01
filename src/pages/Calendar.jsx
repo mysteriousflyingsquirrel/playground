@@ -112,14 +112,14 @@ function getOwningSeasonIdForDay(seasons, activeSeasonId, date) {
 }
 
 const dayBtnBase =
-  'm-0 min-h-8 cursor-pointer rounded-md border font-inherit text-xs text-fg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent'
+  'm-0 min-h-8 cursor-pointer rounded-md border font-inherit text-xs text-fg transition-[border-color,background-color,box-shadow] duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-ring)]'
 
 function dayButtonClass(inRange, isEdge, isToday) {
   return cn(
-    !isEdge && inRange && 'border-border bg-accent/15 hover:border-accent-dim hover:bg-accent/10',
-    !isEdge && !inRange && 'border-border bg-bg hover:border-accent-dim hover:bg-accent/10',
-    isEdge && 'border-accent-dim bg-accent/35 font-semibold text-fg hover:bg-accent/40',
-    isToday && 'ring-1 ring-inset ring-accent',
+    !isEdge && inRange && 'border-border bg-accent/15 hover:border-primary/40 hover:bg-accent/12',
+    !isEdge && !inRange && 'border-border bg-bg hover:border-primary/35 hover:bg-muted-bg/80',
+    isEdge && 'border-primary bg-accent/25 font-semibold text-fg hover:bg-accent/35',
+    isToday && 'ring-2 ring-inset ring-primary/50',
   )
 }
 
@@ -147,7 +147,7 @@ function MonthGrid({
 
   return (
     <section
-      className="min-w-0 rounded-lg border border-border bg-surface p-2.5"
+      className="min-w-0 rounded-2xl border border-border bg-surface p-3 shadow-ds-sm"
       aria-label={monthTitle}
       onMouseLeave={onLeaveGrid}
     >
@@ -201,7 +201,10 @@ function MonthGrid({
                 showDraft
                   ? dayButtonClass(draftInRange, draftIsEdge, isToday)
                   : !ownSeason
-                    ? cn('border-border bg-bg hover:border-accent-dim hover:bg-accent/10', isToday && 'ring-1 ring-inset ring-accent')
+                    ? cn(
+                        'border-border bg-bg hover:border-primary/35 hover:bg-muted-bg/80',
+                        isToday && 'ring-2 ring-inset ring-primary/50',
+                      )
                     : cn(
                         'font-medium',
                         seasonIsEdge && 'font-semibold',
@@ -223,7 +226,8 @@ function MonthGrid({
   )
 }
 
-const defaultColor = '#6eb5ff'
+/** Default season swatch: `--color-secondary` / Taurex bright blue */
+const defaultColor = '#0F69ED'
 
 function newId() {
   if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID()
@@ -325,48 +329,54 @@ export default function Calendar() {
   }, [rangeStart, hoverDate])
 
   return (
-    <div className="max-w-7xl">
-      <h1 className="mb-3 text-[1.75rem] font-semibold">Calendar</h1>
-      <p className="mb-6 text-[1.05rem] leading-normal text-muted [&_strong]:text-fg">
-        Create <strong>seasons</strong> with a name and color, choose an active season, then click two
-        days on the grid to add a <strong>date range</strong>. A year shows all twelve months; use
-        the arrows to change year.
-      </p>
+    <div className="ds-page">
+      <header className="ds-page-header">
+        <div className="ds-page-header-inner">
+          <p className="ds-page-kicker">Scheduling</p>
+          <h1 className="ds-page-title">Calendar</h1>
+          <p className="ds-page-lede">
+            Create <strong className="font-semibold text-fg">seasons</strong> with a name and color, choose an active
+            season, then click two days on the grid to add a{' '}
+            <strong className="font-semibold text-fg">date range</strong>. A year shows all twelve months; use the arrows
+            to change year.
+          </p>
+        </div>
+      </header>
 
-      <section className="mb-6 rounded-lg border border-border bg-surface/80 p-4" aria-labelledby="seasons-heading">
-        <h2 id="seasons-heading" className="mb-3 text-base font-semibold text-fg">
-          Seasons
-        </h2>
+      <section className="ds-section ring-1 ring-secondary/[0.06]" aria-labelledby="seasons-heading">
+        <div className="mb-6 flex flex-col gap-2 border-b border-border pb-5 sm:flex-row sm:items-end sm:justify-between">
+          <h2 id="seasons-heading" className="ds-section-title m-0">
+            Seasons
+          </h2>
+          <p className="m-0 text-xs text-muted">Create a season, pick it as active, then paint ranges on the grid.</p>
+        </div>
 
-        <form onSubmit={addSeason} className="mb-4 flex flex-wrap items-end gap-3">
-          <div className="min-w-0">
-            <label className="mb-1 block text-sm text-muted" htmlFor={nameId}>
+        <form onSubmit={addSeason} className="mb-8 flex flex-wrap items-end gap-4 border-b border-border pb-8">
+          <div className="min-w-0 w-full flex-1">
+            <label className="ds-field-label" htmlFor={nameId}>
               Name
             </label>
             <input
               id={nameId}
-              className="w-48 max-w-full rounded-lg border border-border bg-bg px-3 py-2 font-inherit text-fg"
+              className="ds-input w-full bg-bg"
               value={newSeasonName}
               onChange={(e) => setNewSeasonName(e.target.value)}
               placeholder="e.g. Winter training"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm text-muted" htmlFor={colorId}>
+            <label className="ds-field-label" htmlFor={colorId}>
               Color
             </label>
             <input
               id={colorId}
               type="color"
-              className="h-10 w-14 cursor-pointer rounded border border-border bg-bg p-0.5"
+              className="h-10 w-14 cursor-pointer rounded-lg border border-border bg-bg p-0.5 shadow-ds-sm transition-[border-color,box-shadow] duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-ring)]"
               value={newSeasonColor}
               onChange={(e) => setNewSeasonColor(e.target.value)}
             />
           </div>
-          <button
-            type="submit"
-            className="m-0 cursor-pointer rounded-lg border border-border bg-accent/20 px-3 py-2 text-sm font-medium text-fg transition-colors hover:border-accent-dim hover:bg-accent/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
+          <button type="submit" className="ds-btn-primary">
             Add season
           </button>
         </form>
@@ -381,17 +391,15 @@ export default function Calendar() {
                 <li
                   key={s.id}
                   className={cn(
-                    'flex flex-col gap-2 rounded-md border p-3 sm:flex-row sm:items-start sm:justify-between',
-                    isActive
-                      ? 'border-accent-dim bg-accent/10'
-                      : 'border-border bg-bg/60',
+                    'flex flex-col gap-2 rounded-xl border p-4 shadow-ds-sm sm:flex-row sm:items-start sm:justify-between',
+                    isActive ? 'border-secondary/40 bg-muted-bg shadow-ds-md' : 'border-border bg-bg',
                   )}
                 >
                   <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
                     <input
                       type="radio"
                       name="active-season"
-                      className="h-4 w-4 accent-accent"
+                      className="h-4 w-4 shrink-0 accent-accent"
                       checked={isActive}
                       onChange={() => {
                         setActiveSeasonId(s.id)
@@ -407,7 +415,7 @@ export default function Calendar() {
                     />
                     <input
                       type="text"
-                      className="w-44 max-w-full rounded-md border border-border bg-bg px-2 py-1 text-sm font-medium text-fg"
+                      className="min-w-0 flex-1 basis-0 rounded-md border border-border bg-bg px-2 py-1 text-sm font-medium text-fg"
                       value={s.name}
                       onChange={(e) => updateSeason(s.id, { name: e.target.value })}
                       aria-label={`Season name for ${s.name || 'season'}`}
@@ -428,7 +436,7 @@ export default function Calendar() {
                             </span>
                             <button
                               type="button"
-                              className="m-0 cursor-pointer rounded border border-border px-1.5 py-0.5 text-xs text-fg hover:border-red-500/50 hover:bg-red-500/10"
+                              className="m-0 cursor-pointer rounded-md border border-border px-2 py-1 text-xs font-medium text-fg transition-colors duration-200 hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive"
                               onClick={() => removeRange(s.id, i)}
                               aria-label={`Remove range ${r.start} to ${r.end}`}
                             >
@@ -441,7 +449,7 @@ export default function Calendar() {
                   </div>
                   <button
                     type="button"
-                    className="m-0 shrink-0 cursor-pointer rounded-lg border border-border px-2.5 py-1.5 text-sm text-fg transition-colors hover:border-red-500/50 hover:text-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    className="m-0 shrink-0 cursor-pointer rounded-lg border border-border px-3 py-2 text-sm font-medium text-fg transition-colors duration-200 hover:border-destructive/45 hover:text-destructive focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-ring)]"
                     onClick={() => removeSeason(s.id)}
                     aria-label={`Delete season ${s.name}`}
                   >
@@ -454,8 +462,8 @@ export default function Calendar() {
         )}
       </section>
 
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <p className="text-sm text-muted">
+      <div className="rounded-2xl border border-border bg-muted-bg px-4 py-4 shadow-ds-sm sm:px-6">
+        <p className="m-0 text-sm leading-relaxed text-muted">
           {activeSeason ? (
             <>
               Active season: <span className="text-fg">{activeSeason.name}</span>. {draftSummary ? (
@@ -470,29 +478,33 @@ export default function Calendar() {
         </p>
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center justify-center gap-3">
+      <div className={cn('ds-toolbar mx-auto w-full max-w-none gap-4 py-2 sm:px-6', 'justify-center')}>
         <button
           type="button"
-          className="m-0 inline-flex min-h-10 min-w-10 cursor-pointer items-center justify-center rounded-lg border border-border bg-surface text-lg font-medium text-fg transition-colors hover:border-accent-dim hover:bg-accent/12 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="ds-btn-ghost inline-flex min-h-11 min-w-11 items-center justify-center px-2 py-2"
           onClick={() => setViewYear((y) => y - 1)}
           aria-label="Previous year"
         >
-          &lt;
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+            <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </button>
-        <div className="min-w-[6rem] text-center text-lg font-semibold text-fg" aria-live="polite">
+        <div className="min-w-[8rem] text-center text-2xl font-extrabold tabular-nums tracking-tight text-fg" aria-live="polite">
           {viewYear}
         </div>
         <button
           type="button"
-          className="m-0 inline-flex min-h-10 min-w-10 cursor-pointer items-center justify-center rounded-lg border border-border bg-surface text-lg font-medium text-fg transition-colors hover:border-accent-dim hover:bg-accent/12 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="ds-btn-ghost inline-flex min-h-11 min-w-11 items-center justify-center px-2 py-2"
           onClick={() => setViewYear((y) => y + 1)}
           aria-label="Next year"
         >
-          &gt;
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+            <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid w-full min-w-0 max-w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {MONTH_LABELS.map((_, month) => (
           <MonthGrid
             key={`${viewYear}-${month}`}
